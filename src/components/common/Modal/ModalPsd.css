@@ -1,0 +1,15 @@
+.ui.modal{
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  margin: -255px 0 0 -450px !important;
+}
+
+.custom-overlay{
+
+  padding-top:40px !important;
+
+}
+.custom-modal{
+  max-width: 1200px !important;
+}

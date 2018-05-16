@@ -1,0 +1,125 @@
+{
+  "newEntry" : [ null, {
+    "productId" : "-L9BruJEo4odUUoKtuZQ"
+  }, null, {
+    "productId" : "-L9BrG2VlZYB-Em2Nggj"
+  }, {
+    "productId" : "-L9BpjL9-1LvgxykqlU8"
+  }, {
+    "productId" : "-L9BvHLHNqExk7GhWFkR"
+  }, {
+    "productId" : "-L9BuS3bdAZu2g39UJA2"
+  } ],
+  "products" : {
+    "-L96BwjBkHkB0mv4bE2J" : {
+      "amount" : "3",
+      "code" : "C01000001",
+      "desc" : "regag",
+      "imgFile" : "",
+      "name" : "aaaa",
+      "no" : "1",
+      "price" : "300",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L96C4ieJOqf8sx7o1-1" : {
+      "amount" : "4",
+      "code" : "C01000002",
+      "desc" : "agesgag",
+      "imgPath" : "img_products/1-168.jpg",
+      "name" : "ทดสอบ 1",
+      "no" : "2",
+      "price" : "400",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L96CGqNk85XXBILxg-R" : {
+      "amount" : "3",
+      "code" : "C01000003",
+      "desc" : "agesagasg",
+      "imgFile" : "",
+      "name" : "ทดสอบ 2",
+      "no" : "3",
+      "price" : "300",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9BpjL9-1LvgxykqlU8" : {
+      "amount" : "3",
+      "code" : "C01000004",
+      "desc" : "agesag",
+      "imgPath" : "img_products/16-38.jpg",
+      "name" : "ทดสอบสินค้า 3",
+      "no" : "4",
+      "price" : "400",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9BrG2VlZYB-Em2Nggj" : {
+      "amount" : "5",
+      "code" : "C01000005",
+      "desc" : "sageseg",
+      "imgPath" : "img_products/9-64.jpg",
+      "name" : "ทดสอบ 4",
+      "no" : "5",
+      "price" : "300",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9BruJEo4odUUoKtuZQ" : {
+      "amount" : "4",
+      "code" : "C01000006",
+      "desc" : "sgaeg",
+      "imgPath" : "img_products/3-141.jpg",
+      "name" : "ทดสอบ 5",
+      "no" : "6",
+      "price" : "600",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9BuS3bdAZu2g39UJA2" : {
+      "amount" : "6",
+      "code" : "C01000007",
+      "desc" : "sgag",
+      "imgPath" : "img_products/2-150.jpg",
+      "name" : "ทดสอบสินค้า 6",
+      "no" : "7",
+      "price" : "300",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9Buk8iu0uOQZNyBm5t" : {
+      "amount" : "44",
+      "code" : "C01000008",
+      "desc" : "esgasg",
+      "imgFile" : "",
+      "name" : "aegsgaseg",
+      "no" : "8",
+      "price" : "55",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9Butfr2pety7nj09mS" : {
+      "amount" : "45",
+      "code" : "C01000009",
+      "desc" : "sgsag",
+      "imgFile" : "",
+      "name" : "ทดสอบสินค้า 13",
+      "no" : "9",
+      "price" : "500",
+      "product_type" : "book",
+      "type_sale" : "order"
+    },
+    "-L9BvHLHNqExk7GhWFkR" : {
+      "amount" : "33",
+      "code" : "C01000010",
+      "desc" : "ageg",
+      "imgPath" : "img_products/27-7.jpg",
+      "name" : "ทดสอบ17",
+      "no" : "10",
+      "price" : "400",
+      "product_type" : "book",
+      "type_sale" : "order"
+    }
+  }
+}
