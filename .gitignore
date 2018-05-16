@@ -20,4 +20,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-/firebase_key.js
+/src/firebase_key.js

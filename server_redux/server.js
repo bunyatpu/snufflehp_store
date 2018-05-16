@@ -11,7 +11,7 @@ import firebase from 'firebase'
 import { default as configureStore } from '../src/config/configStore'
 import { getNewEntry } from '../src/firebase/firebase'
 
-import {fkey} from '../firebase_key'
+import {fkey} from '../src/firebase_key'
 //import {init as firebaseInit} from '../src/firebase/firebase'
 
 

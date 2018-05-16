@@ -83,7 +83,7 @@
     "start:ssr_es6": "NODE_ENV=development node server_es6/index.js",
     "start:ssr_redux": "NODE_ENV=development node server_redux/index.js",
     "build:ssr": "cross-env NODE_ENV=production webpack --config ./webpack.ssr.config.js",
-    "build:all_ssr":"npm run build && npm run build:ssr"
+    "build:all_ssr": "npm run build && npm run build:ssr"
   },
   "jest": {
     "collectCoverageFrom": [
