@@ -1,0 +1,13 @@
+{
+  "name": "snufflehp_store",
+  "description": "snufflehp_store Hosting",
+  "dependencies": {
+    "express": "^4.15.2",
+    "firebase": "^5.0.2",
+    "firebase-admin": "^5.12.1",
+    "firebase-functions": "^1.0.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "request": "^2.81.0"
+  }
+}
