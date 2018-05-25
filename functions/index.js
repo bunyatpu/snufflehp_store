@@ -1,38 +1,84 @@
-'use strict';
+/**
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
+const functions = require('firebase-functions');
+const firebase = require('firebase');
+const express = require('express');
+const app = require('express')();
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const fireConfig = require('./firebase_key');
+
+// React App
+const ServerApp = React.createFactory(require('./build/server.bundle.js').default);
+
+const database = require('./firebase-db');
+
+const keys = fireConfig.fkey;
+database.initializeApp(keys);
+//local
+app.use(express.static('../public'));
+
+
+
+app.get('*', (req, res) => {
+
+
+  database.getNewEntry().then(function(products){
+
+    var prodVal = (products === null) ? {}:products;
+
+    const init =  {
+      "Products":prodVal
+    }
+
+    const html = ReactDOMServer.renderToString(ServerApp({init: init,req:req, context: {},fireConf:keys}));
+  
+    res.send(renderFullPage(html,{}))
+
+  });
+
+  
+  //res.send('1000')
 });
-exports.snuff_app = undefined;
 
-var _firebaseFunctions = require('firebase-functions');
+function renderFullPage(html, preloadedState) {
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <title>Redux Universal Example</title>
+        <link href="/static/css/main.9b29228e.css" rel="stylesheet">
+      </head>
+      <body>
+        <div id="root">${html}</div>
+        <script>
+          // WARNING: See the following for security issues around embedding JSON in HTML:
+          // http://redux.js.org/recipes/ServerRendering.html#security-considerations
+          window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}
+        </script>
+        
+      </body>
+    </html>
+    `
+}
 
-var functions = _interopRequireWildcard(_firebaseFunctions);
+exports.snuff_app = functions.https.onRequest(app);
 
-var _express = require('express');
-
-var _express2 = _interopRequireDefault(_express);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
-
-var app = (0, _express2.default)();
-
-app.get('*', function (req, res) {
-  res.send("<h1>Hello firebase ES6</h1>");
-});
-
-var snuff_app = exports.snuff_app = functions.https.onRequest(app);
-
-// app.listen(4003, (err) => {
+// app.listen(4000, (err) => {
 //   if (err) throw err
-//   console.log('> Ready on http://localhost:4003')
+//   console.log('> Ready on http://localhost:4000')
 // })

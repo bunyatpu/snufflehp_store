@@ -1,5 +1,4 @@
 import Home from '../components/Frontsite/Home'
-import AdminProduct from '../components/Admin/AdminProduct'
 
 export default {
 
@@ -8,12 +7,6 @@ export default {
 			icon: 'dashboard',
 			label: 'Dashboard',
 			to: '/admin/dashboard',
-		},
-		{
-			icon: 'list',
-			label: 'สินค้า',
-			component: AdminProduct,
-			to: '/admin/products',
 		},
 		{
 			icon: 'user',

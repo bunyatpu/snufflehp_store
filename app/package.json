@@ -83,7 +83,8 @@
     "start:ssr_es6": "NODE_ENV=development node server_es6/index.js",
     "start:ssr_redux": "NODE_ENV=development node server_redux/index.js",
     "build:ssr": "cross-env NODE_ENV=production webpack --config ./webpack.ssr.config.js",
-    "build:all_ssr": "npm run build && npm run build:ssr"
+    "build:all_ssr": "npm run build && npm run build:ssr",
+    "buildServer": "NODE_ENV=production ./node_modules/.bin/webpack --config ./config_gpack/webpack.server.config.js"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -121,13 +122,20 @@
   },
   "babel": {
     "presets": [
-      "react-app"
+      "react-app",
+      "react",
+      "stage-0"
     ]
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^0.1.18"
+    "clean-webpack-plugin": "^0.1.18",
+    "babel-core": "6.24.1",
+    "babel-loader": "7.0.0",
+    "babel-preset-react": "6.24.1",
+    "babel-preset-stage-0": "6.24.1",
+    "webpack": "2.5.0"
   }
 }

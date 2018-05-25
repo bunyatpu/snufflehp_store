@@ -1,17 +1,18 @@
-import { 
-  getProductDB,
-  saveProductDB,
-  delProductDB,
-  uploadImage,
-  getNewEntry ,
-  getProductPromote
-} from '../firebase/firebase'
+// import { 
+//   getProductDB,
+//   saveProductDB,
+//   delProductDB,
+//   uploadImage,
+//   getNewEntry ,
+//   getProductPromote
+// } from '../firebase/firebase'
+import database from 'firebase-database';
 import actionType from '../constants'
 
 export const loadProducts = () => {
   return (dispatch) => {
 
-    getProductDB()
+    database.getProductDB()
       .then( (products) => {
 
         let prodVal = (products.val() === null) ? {}:products.val();
@@ -43,12 +44,12 @@ export const saveProduct = (payload) =>{
     
     if(payload.imgFile !== undefined && payload.imgFile !== ''){
 
-      uploadImage(payload.imgFile).then( (snap) => {
+      database.uploadImage(payload.imgFile).then( (snap) => {
 
         //save to firebase
         payload.imgPath = 'img_products/'+payload.imgFile.name;
         delete payload.imgFile;
-        saveProductDB(payload).then((res)=>{
+        database.saveProductDB(payload).then((res)=>{
   
           //save to redux
           dispatch({
@@ -73,7 +74,7 @@ export const saveProduct = (payload) =>{
     }else{
 
 
-      saveProductDB(payload).then((res)=>{
+      database.saveProductDB(payload).then((res)=>{
   
         //save to redux
         dispatch({
@@ -108,7 +109,7 @@ export const delProduct = (keyProduct) => {
 
   return (dispatch) => {
 
-    delProductDB(keyProduct).then(()=>{
+    database.delProductDB(keyProduct).then(()=>{
 
       dispatch({
         type:actionType.DETETE_PRODUCT, 
@@ -132,7 +133,7 @@ export const loadNewEntry = () => {
 
     //console.log('getNewEntry');
     
-    getNewEntry()
+    database.getNewEntry()
       .then( (products) => {
 
         //console.log('-->products:',products);
@@ -153,7 +154,7 @@ export const loadNewEntry = () => {
 
 export const loadProductPromote = () =>{
   return (dispatch) => {
-    getProductPromote((snap)=>{
+    database.getProductPromote((snap)=>{
       let prodVal = (snap.val() === null) ? {}:snap.val();
 
         dispatch({

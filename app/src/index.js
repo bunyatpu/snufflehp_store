@@ -2,12 +2,13 @@ import React from 'react';
 import {hydrate} from 'react-dom';
 import {Provider} from 'react-redux'
 import { BrowserRouter } from 'react-router-dom';
-import {init as firebaseInit} from './firebase/firebase'
+//import {init as firebaseInit} from './firebase/firebase'
+import database from 'firebase-database';
 import configureStore from 'config/configStore'
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-firebaseInit()
+database.initializeApp()
 console.log('call root index');
 
 const init = {
