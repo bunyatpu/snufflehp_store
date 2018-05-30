@@ -190,3 +190,7 @@ img.report-img {
   padding-top:20px;
 }
 
+.MuiModal-hidden-53{
+  visibility: unset !important;
+}
+

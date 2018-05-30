@@ -21,6 +21,7 @@ const app = require('express')();
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const fireConfig = require('./firebase_key');
+const template = require('./html-template');
 
 // React App
 const ServerApp = React.createFactory(require('./build/server.bundle.js').default);
@@ -31,8 +32,6 @@ const keys = fireConfig.fkey;
 database.initializeApp(keys);
 //local
 app.use(express.static('../public'));
-
-
 
 app.get('*', (req, res) => {
 
@@ -47,11 +46,10 @@ app.get('*', (req, res) => {
 
     const html = ReactDOMServer.renderToString(ServerApp({init: init,req:req, context: {},fireConf:keys}));
   
-    res.send(renderFullPage(html,{}))
+    res.send(template(html,{init:init}))
 
   });
 
-  
   //res.send('1000')
 });
 
@@ -61,15 +59,16 @@ function renderFullPage(html, preloadedState) {
     <html>
       <head>
         <title>Redux Universal Example</title>
-        <link href="/static/css/main.9b29228e.css" rel="stylesheet">
+        <link href="/static/css/main.d9914f3e.css" rel="stylesheet">
       </head>
       <body>
         <div id="root">${html}</div>
         <script>
           // WARNING: See the following for security issues around embedding JSON in HTML:
           // http://redux.js.org/recipes/ServerRendering.html#security-considerations
-          window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}
+          window.__initialState = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}
         </script>
+        <script src='/static/js/main.df8ee9a0.js'></script>
         
       </body>
     </html>

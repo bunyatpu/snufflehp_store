@@ -91,3 +91,17 @@
     border-radius: 50%;
     position: absolute;
 }
+.accTxt a{
+  color:rgba(255,255,255,0.75)
+}
+.accTxt a:hover{
+  cursor: pointer;
+  color:#fff;
+}
+
+.visible.transition {
+  margin-top: auto !important;
+  display: inline-block !important;
+  position: relative;
+  top: 20%;
+}

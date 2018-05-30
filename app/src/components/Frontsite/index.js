@@ -10,6 +10,9 @@ import 'semantic-ui-css/semantic.min.css';
 
 import {Grid} from 'semantic-ui-react';
 
+// import Home from './Home'
+// import Preorder from './preorder'
+
 export default class Frontsite extends Component {
 
 
@@ -22,7 +25,6 @@ export default class Frontsite extends Component {
 					<meta charSet="utf-8" />
 					<title>SnuffleHP</title>
 				</Helmet>
-
 				<Grid padded="vertically">
 					<Grid.Row className="mainHeader"  >
 						<Grid.Column >
@@ -36,13 +38,15 @@ export default class Frontsite extends Component {
 					</Grid.Row>
 					<Grid.Row  style={{paddingTop:'0px'}}  className="mainContent">
 						<Grid.Column>
-						{
-							routeMap.frontSite.map((rt, i) => (
-								<Route key={i} path={rt.path} render={(props) => (
-									<rt.component {...props} routes={rt.routes} />
-								)}/>
-							))
-						}
+
+							{
+								routeMap.frontSite.map((rt, i) => (
+									<Route key={i} exact={rt.exact} path={rt.path} render={(props) => (
+										<rt.component  {...props} routes={rt.routes} />
+									)}/>
+								))
+							}
+							
 						</Grid.Column>
 					</Grid.Row>
 				</Grid>
@@ -54,12 +58,3 @@ export default class Frontsite extends Component {
 
 }
 
-/* <div className="mainHeader">
-          <Header />
-        </div>
-        <div className="mainMenu">
-          menu
-        </div>
-        <div className="mainContent">
-          Content
-        </div> */
