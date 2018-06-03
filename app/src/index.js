@@ -5,8 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 import database from 'firebase-database';
 import configureStore from 'config/configStore'
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 import configFire from './firebase/firebase_key';
+//import { sessionService } from 'redux-react-session';
+import { CookiesProvider } from 'react-cookie';
 
 
 let allInit = window.__initialState;
@@ -17,15 +19,22 @@ if(!allInit){
 }else{
   init  = allInit.init
 }
+
 let store = configureStore(init)
+//sessionService.initSessionService(store, { driver: 'COOKIES' });
 database.initializeApp(configFire.fkey)
 const renderMethod = !!module.hot ? render : hydrate
 
+//const wrapCookie = withCookies(<App state={window.__initialState} callFrom="client" />);
+
+
 renderMethod(
-<Provider store={store}>
-  <BrowserRouter>
-    <App state={window.__initialState} />
-  </BrowserRouter>
-</Provider>
+  <CookiesProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App state={window.__initialState} callFrom="client" />
+      </BrowserRouter>
+    </Provider>
+  </CookiesProvider>
 , document.getElementById('root'));
-registerServiceWorker();
+// registerServiceWorker();

@@ -15,6 +15,12 @@ const styles = theme => ({
     h2:{
       paddingLeft:'8px'
     }
+  },
+  fixWidth:{
+    maxWidth:"500px"
+  },
+  fixPaper:{
+    border:"3px solid #00b5ad"
   }
 });
 
@@ -27,7 +33,12 @@ class MuiDialog extends React.Component {
 
   render() {
 
-    let {isOpen,clickBack} = this.props;
+    let {isOpen,clickBack,size,classes,fixWidth} = this.props;
+
+    //console.log('fixWidth',fixWidth)
+    let fixClass = (fixWidth !== undefined) ? {paperWidthSm:classes[fixWidth]}:{}
+    //console.log('fixClass',fixClass)
+    //border:"
 
     return (
 
@@ -37,10 +48,12 @@ class MuiDialog extends React.Component {
         aria-labelledby="form-dialog-title"
         style={{visibility:"unset"}}
         fullWidth={true}
-        maxWidth="sm"
+        maxWidth={size}
         disableBackdropClick={clickBack}
+        classes={Object.assign({},fixClass,{paper:classes.fixPaper})}
+
       >
-        <DialogContent>
+        <DialogContent >
           {this.props.children}
         </DialogContent>
        

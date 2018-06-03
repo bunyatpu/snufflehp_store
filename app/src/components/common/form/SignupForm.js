@@ -28,7 +28,8 @@ const styles = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
-    width:'100%'
+    width:'100%',
+    paddingRight:'15px'
   },
   button: {
     margin: theme.spacing.unit
@@ -137,17 +138,18 @@ class SignupForm extends React.Component {
 
   onSignup = () => {
 
-    this.props.onSetClickBack(true)
-    this.setState({success: false,loading: true,})
+    
 
     //pre validate
     let prev = this.preValidate();
 
     //check user name
-
+    
     //--
 
     if(prev){
+      this.props.onSetClickBack(true)
+      this.setState({success: false,loading: true,})
       signUp(this.state).then(res => {
         console.log('add succ',res);
         
@@ -219,7 +221,7 @@ class SignupForm extends React.Component {
       <div className={classes.container}>
         
         <div style={{display:(showMainForm)?"block":"none"}}>
-          <h2 style={{paddingLeft:'8px',marginBottom:"0"}}>สมัครสมาชิก</h2>
+          <h2 style={{paddingLeft:'8px',marginBottom:"0",color:"#5a5a59"}}>สมัครใหม่</h2>
           <FormControl fullWidth error={this.state.req_email} className={classes.formControl}>
             <InputLabel 
               htmlFor="Email"
@@ -234,6 +236,7 @@ class SignupForm extends React.Component {
               name="email" 
               value={this.state.email} 
               onChange={this.handleChange} 
+              autoComplete="off"
               classes={{
                 underline: classes.cssUnderline,
               }}/>

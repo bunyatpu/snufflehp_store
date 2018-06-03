@@ -9,7 +9,7 @@
     "postpackage-functions": "cd functions && npm install",
     "postpackage-functions-full": "cd functions && npm install",
     "prepackage-functions": "rimraf functions",
-    "build-es6":"npm run prepackage-functions && npm run   package-functions && npm run  postpackage-functions "
+    "build-es6": "npm run prepackage-functions && npm run   package-functions && npm run  postpackage-functions "
   },
   "author": "",
   "license": "ISC",

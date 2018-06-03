@@ -13,6 +13,13 @@ const addUser = (data) => {
 
 }
 
+const loadUser = (userId) =>{
+  //console.log('userId',userId);
+  var fbRef = firebase.database().ref('users')
+  return fbRef.orderByChild("authId").equalTo(userId).once('value')
+}
+
 module.exports = {
-  addUser
+  addUser,
+  loadUser
 }

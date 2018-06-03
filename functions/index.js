@@ -16,13 +16,15 @@
 
 const functions = require('firebase-functions');
 const firebase = require('firebase');
+const cookieParser = require('cookie-parser')();
+const cors = require('cors')({origin: true});
 const express = require('express');
 const app = require('express')();
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const fireConfig = require('./firebase_key');
 const template = require('./html-template');
-
+// const cookiesMiddleware = require('universal-cookie-express');
 // React App
 const ServerApp = React.createFactory(require('./build/server.bundle.js').default);
 
@@ -32,9 +34,21 @@ const keys = fireConfig.fkey;
 database.initializeApp(keys);
 //local
 app.use(express.static('../public'));
+app.use(cors);
+app.use(cookieParser);
+// app.use(cookiesMiddleware())
+
+// app.get("/service-worker.js", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "public", "service-worker.js"));
+// });
+
+// app.get('/favicon.ico', function(req, res) {
+//   res.send(204);
+// });
 
 app.get('*', (req, res) => {
 
+  console.log('server show cookies',req.cookies);
 
   database.getNewEntry().then(function(products){
 
@@ -44,9 +58,15 @@ app.get('*', (req, res) => {
       "Products":prodVal
     }
 
-    const html = ReactDOMServer.renderToString(ServerApp({init: init,req:req, context: {},fireConf:keys}));
+    const objCookies = (req.cookies && req.cookies.__session !== undefined) ? JSON.parse(req.cookies.__session):{};
+
+    const html = ReactDOMServer.renderToString(
+      ServerApp({init: init,req:req, context: {},fireConf:keys,cookies:objCookies})
+    );
   
     res.send(template(html,{init:init}))
+
+    //res.send('<h2>show cookies</h2><br>'+JSON.stringify(req.cookies)+'')
 
   });
 
