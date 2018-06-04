@@ -8,7 +8,7 @@ import App from './App';
 //import registerServiceWorker from './registerServiceWorker';
 import configFire from './firebase/firebase_key';
 //import { sessionService } from 'redux-react-session';
-import { CookiesProvider } from 'react-cookie';
+// import { CookiesProvider } from 'react-cookie';
 
 
 let allInit = window.__initialState;
@@ -29,12 +29,12 @@ const renderMethod = !!module.hot ? render : hydrate
 
 
 renderMethod(
-  <CookiesProvider>
+
     <Provider store={store}>
       <BrowserRouter>
         <App state={window.__initialState} callFrom="client" />
       </BrowserRouter>
     </Provider>
-  </CookiesProvider>
+
 , document.getElementById('root'));
 // registerServiceWorker();

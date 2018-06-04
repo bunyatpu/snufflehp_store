@@ -7,7 +7,7 @@ import {Grid, Popup,Menu} from 'semantic-ui-react';
 import MuiDialog from '../../../components/common/dialog/MuiDialog'
 import SignupForm from '../../../components/common/form/SignupForm'
 import SigninForm from '../../../components/common/form/SigninForm'
-import { withCookies } from 'react-cookie';
+// import { withCookies } from 'react-cookie';
 
 
 
@@ -50,13 +50,13 @@ class AccountInfo extends Component {
 
   onSignOut = () =>{
 
-    console.log('onSignOut');
+    //console.log('onSignOut');
     //localStorage.removeItem('userInfo');
-    const { cookies } = this.props;
+    // const { cookies } = this.props;
     this.props.logOut(()=>{
-      if(cookies){
-        cookies.remove('__session')
-      }
+      // if(cookies){
+      //   cookies.remove('__session')
+      // }
     });
 
    
@@ -69,8 +69,8 @@ class AccountInfo extends Component {
 	render() {
 
     let { userInf } = this.props;
-    console.log('render userInf',userInf)
-    console.log('render userInf.username',userInf.userName)
+    // console.log('render userInf',userInf)
+    // console.log('render userInf.username',userInf.userName)
 
     const showUser = (userInf && userInf.userName !== undefined) ? (
       <div>
@@ -153,5 +153,5 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default withCookies(connect(mapStateToProps, {logOut})(AccountInfo));
+export default connect(mapStateToProps, {logOut})(AccountInfo);
 

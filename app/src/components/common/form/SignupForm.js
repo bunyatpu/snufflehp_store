@@ -20,7 +20,9 @@ import * as icons from 'react-icons/lib/md';
 
 import {orange,green} from '@material-ui/core/colors';
 import {signUp} from '../../../firebase/auth';
-import {addUser} from '../../../firebase/user';
+// import {addUser} from '../../../firebase/user';
+import { connect } from 'react-redux'
+import { addNewUser ,loadUserInf} from '../../../actions/User';
 
 
 
@@ -148,34 +150,61 @@ class SignupForm extends React.Component {
     //--
 
     if(prev){
+
       this.props.onSetClickBack(true)
       this.setState({success: false,loading: true,})
+
       signUp(this.state).then(res => {
-        console.log('add succ',res);
-        
-        addUser(Object.assign(this.state, {authId:res.uid}))
+        //console.log('add succ',res);
+
+        this.props.addNewUser(Object.assign(this.state, {authId:res.uid}))
         .then(resUser => {
 
           this.setState({success: true,loading: false,showMainForm:false})
           this.props.onSetClickBack(false)
 
+          //load user data
+          //console.log('res.uid',res.uid)
+          this.props.loadUserInf(res.uid);
+          //--
+
           setTimeout(()=>{
-            console.log('wait close!')
+
             this.props.onCloseDialog();
           }, 3000)
 
         })
         .catch(errUser =>{
 
+          console.log(errUser);
           this.setState({success: true,loading: false})
           this.props.onSetClickBack(false)
+
         })
+        
+        // addUser(Object.assign(this.state, {authId:res.uid}))
+        // .then(resUser => {
+
+
+        //   this.setState({success: true,loading: false,showMainForm:false})
+        //   this.props.onSetClickBack(false)
+
+        //   setTimeout(()=>{
+
+        //     this.props.onCloseDialog();
+        //   }, 3000)
+
+        // })
+        // .catch(errUser =>{
+
+        //   this.setState({success: true,loading: false})
+        //   this.props.onSetClickBack(false)
+        // })
         
       
       }).catch(error =>{
         
-        //let msg = error.message
-        //console.log('error',error)
+
         let setMsg = {}
         switch(error.code){
           case 'auth/email-already-in-use':
@@ -336,4 +365,4 @@ SignupForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignupForm);
+export default withStyles(styles)(connect(()=>({}), { addNewUser,loadUserInf })(SignupForm));

@@ -10,7 +10,6 @@
     "firebase-functions": "^1.0.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "request": "^2.81.0",
-    "universal-cookie-express": "^2.1.5"
+    "request": "^2.81.0"
   }
 }

@@ -17,7 +17,7 @@ import {orange,green} from '@material-ui/core/colors';
 import {signIn} from '../../../firebase/auth';
 import { connect } from 'react-redux'
 import {loadUserInf} from '../../../actions/User';
-import { withCookies } from 'react-cookie';
+// import cookie from 'react-cookies'
 
 
 const styles = theme => ({
@@ -119,7 +119,7 @@ class SignInForm extends React.Component {
     let prev = this.preValidate();
 
     //check user name
-    const { cookies } = this.props;
+    //const { cookies } = this.props;
     //--
 
     if(prev){
@@ -132,10 +132,12 @@ class SignInForm extends React.Component {
         this.props.loadUserInf(res.uid, (userInf)=>{
 
           //save cookie
-          if(cookies){
-            cookies.set('__session', {userInf}, { path: '/' })
-          }
+          //if(cookies){
+            //cookie.set('__session', {userInf}, { path: '/' })
+          //}
+          //Cookie.set('/', '__session', {userInf}).then(() => console.log('set cookies seccess'));
           //--
+          //cookie.save('__session', {userInf}, { path: '/' })
         })
 
 
@@ -274,4 +276,5 @@ SignInForm.propTypes = {
 };
 
 
-export default withCookies(withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm)));
+//export default withCookies(withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm)));
+export default withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm));
