@@ -19,6 +19,8 @@ class Home extends Component {
 
 	render() {
 
+    //let {history} = this.props;
+    //console.log('home props:',this.props);
     // console.log('===>render stateAll props:',this.props.stateAll);
     // console.log('===>render products props:',this.props.products);
     

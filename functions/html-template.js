@@ -1,3 +1,3 @@
 module.exports = (content,init) => `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><title>React App</title><link href="/static/css/main.34dae4a4.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root">${content}</div><div style="display:none"><script>
       window.__initialState = ${JSON.stringify(init).replace(/</g, '\u003c')}
-    </script></div><script type="text/javascript" src="/static/js/main.8f505ab5.js"></script></body></html>`
+    </script></div><script type="text/javascript" src="/static/js/main.30d5bdba.js"></script></body></html>`

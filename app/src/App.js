@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import {setUserInf} from './actions/User';
-import { Switch, Route } from 'react-router';
+import { Switch, Route,withRouter } from 'react-router-dom';
 import Frontsite from './components/Frontsite'
 // import { withCookies } from 'react-cookie';
 import cookie from 'react-cookies'
@@ -34,7 +34,7 @@ class App extends Component {
   componentWillMount(){
     let { cookieServer } = this.props;
 
-    console.log('first cookieServer',cookieServer)
+    // console.log('first cookieServer',cookieServer)
 
     // if(cookies && cookies.get('__session') !== undefined){
     //   let session = cookies.get('__session')
@@ -55,9 +55,9 @@ class App extends Component {
   }
 
   render() {
-    console.log('App render.');
-    let { callFrom } = this.props;
-    console.log('render from',callFrom);
+    // console.log('App render.');
+    //let { callFrom } = this.props;
+    // console.log('render from',callFrom);
     
     return (
       <div>
@@ -72,5 +72,24 @@ class App extends Component {
 
 }
 
+export default withRouter(connect(()=>({}), {setUserInf})(App));
 
-export default connect(()=>({}), {setUserInf})(App);
+
+
+
+
+
+// return (
+//   <div>
+//     <nav>
+//     <ul>
+//       <li><Link to='/'>Home</Link></li>
+//       <li><Link to='/preorder1'>preorder1</Link></li>
+//     </ul>
+//   </nav>
+//     <Switch>
+//       <Route  exact={true} path="/" render={()=><h2>Home</h2>} />
+//       <Route   path="/preorder1" render={()=><h2>order</h2>} /> 
+//     </Switch>
+//   </div>
+// );

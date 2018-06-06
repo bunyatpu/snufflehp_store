@@ -113,14 +113,8 @@ class SignInForm extends React.Component {
 
   onSignIn = () => {
 
-    
-
     //pre validate
     let prev = this.preValidate();
-
-    //check user name
-    //const { cookies } = this.props;
-    //--
 
     if(prev){
       this.props.onSetClickBack(true)
@@ -131,20 +125,11 @@ class SignInForm extends React.Component {
         //loadUserInf
         this.props.loadUserInf(res.uid, (userInf)=>{
 
-          //save cookie
-          //if(cookies){
-            //cookie.set('__session', {userInf}, { path: '/' })
-          //}
-          //Cookie.set('/', '__session', {userInf}).then(() => console.log('set cookies seccess'));
-          //--
-          //cookie.save('__session', {userInf}, { path: '/' })
         })
 
 
         this.setState({success: true,loading: false,showMainForm:false})
         this.props.onSetClickBack(false)
-
-
 
         setTimeout(()=>{
           console.log('wait close!')
@@ -186,10 +171,12 @@ class SignInForm extends React.Component {
       });
     }
   
-    //--
-    
-    //signup to google auth
-    
+  }
+
+  onKeyEnter = (e) =>{
+    if(e.key === 'Enter'){
+      this.onSignIn()
+    }
   }
 
 
@@ -199,8 +186,9 @@ class SignInForm extends React.Component {
 
     return (
       <div className={classes.container}>
-        
+       
         <div style={{display:(showMainForm)?"block":"none",width:'90%',marginLeft:'15px'}}>
+        
           <h3 style={{paddingLeft:'8px',marginBottom:"0",color:"#5a5a59"}}>เข้าสู่ระบบ</h3>
           <FormControl fullWidth error={this.state.req_email} className={classes.formControl}>
             <InputLabel 
@@ -214,8 +202,10 @@ class SignInForm extends React.Component {
             <Input 
               id="Email" 
               name="email" 
+              autoFocus={true}
               value={this.state.email} 
               onChange={this.handleChange} 
+              onKeyPress={this.onKeyEnter}
               classes={{
                 underline: classes.cssUnderline,
               }}/>
@@ -238,6 +228,7 @@ class SignInForm extends React.Component {
               name="password" 
               type="password" 
               value={this.state.password} 
+              onKeyPress={this.onKeyEnter}
               onChange={this.handleChange} />
             <FormHelperText  style={{display:(this.state.req_password)?'block':'none'}} >{this.state.txt_error_pass}</FormHelperText>
           </FormControl>
@@ -256,8 +247,9 @@ class SignInForm extends React.Component {
               ยกเลิก
             </Button>
           </Grid>
+         
         </div>
-        
+          
         <div style={{display:(!showMainForm)?"block":"none",color:"#00b5ad",width:'100%'}} >
           <Grid  container alignItems="center" justify="center" direction="row" spacing={16}>
             <Grid item><icons.MdCheckCircle size={40}  /></Grid>
@@ -265,7 +257,7 @@ class SignInForm extends React.Component {
           </Grid>
 
         </div>
-        
+       
       </div>
     );
   }

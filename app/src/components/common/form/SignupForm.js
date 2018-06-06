@@ -137,7 +137,6 @@ class SignupForm extends React.Component {
 
   }
 
-
   onSignup = () => {
 
     
@@ -242,6 +241,12 @@ class SignupForm extends React.Component {
     
   }
 
+  onKeyEnter = (e) =>{
+    if(e.key === 'Enter'){
+      this.onSignup()
+    }
+  }
+
   render() {
     const { classes } = this.props;
     const {loading,showMainForm} = this.state
@@ -265,6 +270,7 @@ class SignupForm extends React.Component {
               name="email" 
               value={this.state.email} 
               onChange={this.handleChange} 
+              onKeyPress={this.onKeyEnter}
               autoComplete="off"
               classes={{
                 underline: classes.cssUnderline,
@@ -287,6 +293,7 @@ class SignupForm extends React.Component {
               id="userName" 
               name="userName" 
               value={this.state.userName} 
+              onKeyPress={this.onKeyEnter}
               onChange={this.handleChange} />
 
             <FormHelperText  style={{display:(this.state.req_userName)?'block':'none'}} >กรุณากรอก ชื่อผู้ใช้</FormHelperText>
@@ -308,6 +315,7 @@ class SignupForm extends React.Component {
               name="password" 
               type="password" 
               value={this.state.password} 
+              onKeyPress={this.onKeyEnter}
               onChange={this.handleChange} />
             <FormHelperText  style={{display:(this.state.req_password)?'block':'none'}} >กรุณากรอก รหัสผ่าน</FormHelperText>
           </FormControl>
@@ -327,6 +335,7 @@ class SignupForm extends React.Component {
               id="re_password" 
               name="re_password" 
               type="password" 
+              onKeyPress={this.onKeyEnter}
               value={this.state.re_password} 
               onChange={this.handleChange} />
             <FormHelperText  style={{display:(this.state.req_re_password)?'block':'none'}} >{this.state.txt_error_repass}</FormHelperText>

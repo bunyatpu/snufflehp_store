@@ -52,11 +52,16 @@ class AccountInfo extends Component {
 
     //console.log('onSignOut');
     //localStorage.removeItem('userInfo');
-    // const { cookies } = this.props;
+    // const { history } = this.props;
+
     this.props.logOut(()=>{
       // if(cookies){
       //   cookies.remove('__session')
       // }
+      //console.log('log out')
+      this.props.historya.push('/');
+
+
     });
 
    
@@ -69,7 +74,7 @@ class AccountInfo extends Component {
 	render() {
 
     let { userInf } = this.props;
-    // console.log('render userInf',userInf)
+    // console.log('render routeInfo',routeInfo)
     // console.log('render userInf.username',userInf.userName)
 
     const showUser = (userInf && userInf.userName !== undefined) ? (
@@ -149,7 +154,8 @@ class AccountInfo extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userInf: state.User
+    userInf: state.User,
+    historya:state.RouteInfo.history
   }
 }
 

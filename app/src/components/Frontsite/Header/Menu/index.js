@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import {Grid,List} from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-//import * as icons from 'react-icons/lib/md';
-
-
+import { connect } from 'react-redux'
 import 'semantic-ui-css/semantic.min.css';
-export default class MenuHeader extends Component {
+
+class MenuHeader extends Component {
 
   constructor(props){
     super(props)
@@ -14,24 +13,11 @@ export default class MenuHeader extends Component {
         {name:"หน้าหลัก",link:"/"},
         {name:"เปิดจอง แด่..รัก",link:"/preorder1"},
         {name:"แจ้งโอนเงิน",link:"/tran_status"},
-        {name:"ชำระเงิน",link:"/payment"},
+        //{name:"ชำระเงิน",link:"/payment"},
         {name:"ติดต่อเรา",link:"/contact"}
       ],
       sel:"/"
     }
-    // this.state = {
-    //   "items":[
-    //     "หน้าหลัก",
-    //     "หนังสือทั้งหมด",
-    //     "ชำระเงิน",
-    //     "เปิดจอง",
-    //     "นิยายออกใหม่",
-    //     "มาโปรด",
-    //     "ไร้พ่าย",
-    //     "The Tens",
-    //     "ติดต่อเรา"
-    //   ]
-    // }
   }
 
   handleClick = (e,obj) =>{
@@ -43,21 +29,24 @@ export default class MenuHeader extends Component {
 
 	render() {
 
-    let {items,sel} = this.state;
-    //console.log('sel',sel);
+    let {items} = this.state;
+    let {match} = this.props
+
+    //console.log('match',match);
+    //console.log('menu pros',this.props)
+
+    let pathNow = (match !== undefined) ? match.path:'/';
     
     let lists  = items.map( (item, key) => {
-      //console.log(item.link,sel);
-      
-      let selNow = (item.link === sel) ? true:false
+      //let selNow = (item.link === pathNow) ? true:false
       return <List.Item 
-                active={selNow} 
-                as={Link} 
-                to={item.link} 
-                key={key} 
-                item={item} 
-                onClick={this.handleClick} >{item.name}
-              </List.Item>
+          active={(item.link === pathNow) ? true:false} 
+          as={Link} 
+          to={item.link} 
+          key={key} 
+          item={item} 
+          onClick={this.handleClick} >{item.name}
+        </List.Item>
     });
 
 		return (
@@ -79,3 +68,11 @@ export default class MenuHeader extends Component {
 	}
 
 }
+
+const mapStateToProps = (state) => {
+  return {
+    match: state.RouteInfo.match
+  }
+}
+
+export default connect(mapStateToProps, {})(MenuHeader);;

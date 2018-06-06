@@ -4,12 +4,14 @@ import { sessionReducer } from 'redux-react-session';
 import Products from './Products'
 import ReqProcess from './ReqProcess'
 import User from './User'
+import RouteInfo from './RouteInfo'
 import { reducer as formReducer } from 'redux-form'
 
 const reducer = combineReducers({
   Products,
   ReqProcess,
   User,
+  RouteInfo,
   form: formReducer,
   session: sessionReducer
 })
