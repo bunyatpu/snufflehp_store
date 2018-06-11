@@ -1,5 +1,5 @@
 import Home from '../components/Frontsite/Home'
-import Preorder from '../components/Frontsite/preorder'
+import Product from '../components/Frontsite/Product'
 
 export default {
 
@@ -23,8 +23,9 @@ export default {
 			routes:[]
 		},
 		{
-			path:'/preorder1',
-			component: Preorder,
+			path:'/product',
+			component: Product,
+			params:['productName'],
 			exact:false,
 			routes:[]
 		}

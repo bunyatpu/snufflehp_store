@@ -5,8 +5,10 @@ import * as icons from 'react-icons/lib/md';
 import {Grid, Popup,Menu} from 'semantic-ui-react';
 //import MuiModalWrapped from '../../../components/common/Modal/MuiModal'
 import MuiDialog from '../../../components/common/dialog/MuiDialog'
-import SignupForm from '../../../components/common/form/SignupForm'
+//import SignupForm from '../../../components/common/form/SignupForm'
 import SigninForm from '../../../components/common/form/SigninForm'
+import SignupFullForm from '../../../components/common/form/SignupFullForm'
+import {setSignInOpen,setSignUpOpen} from '../../../actions/DialogAct';
 // import { withCookies } from 'react-cookie';
 
 
@@ -17,19 +19,18 @@ class AccountInfo extends Component {
   constructor(props){
     super(props)
     this.state = {
-      dialogOpen:false,
       clickBack:false,
-      dgSigninOpen:false,
       dgSigninclickBack:false
     }
   }
 
   onOpenDialog = () =>{
-    this.setState({ dialogOpen:true })
+    this.props.setSignUpOpen(true)
   }
 
   onCloseDialog = () => {
-    this.setState({ dialogOpen:false })
+    //console.log('onCloseDialog')
+    this.props.setSignUpOpen(false)
   }
 
   onSetClickBack = (lock) =>{
@@ -37,11 +38,14 @@ class AccountInfo extends Component {
   }
 
   onDgSigninOpenDialog = () =>{
-    this.setState({ dgSigninOpen:true })
+    //this.setState({ dgSigninOpen:true })
+    this.props.setSignInOpen(true)
   }
 
   onDgSigninCloseDialog = () => {
-    this.setState({ dgSigninOpen:false })
+    //this.setState({ dgSigninOpen:false })
+    this.props.setSignInOpen(false)
+   
   }
 
   onDgSigninSetClickBack = (lock) =>{
@@ -73,14 +77,14 @@ class AccountInfo extends Component {
 
 	render() {
 
-    let { userInf } = this.props;
+    let { userInf,signIn,signUp } = this.props;
     // console.log('render routeInfo',routeInfo)
     // console.log('render userInf.username',userInf.userName)
 
     const showUser = (userInf && userInf.userName !== undefined) ? (
-      <div>
+      <div >
         <Popup
-          trigger={<span>{userInf.userName}</span>}
+          trigger={<span className="userNameAccount" style={{fontSize:"18px"}}>{userInf.userName}</span>}
           wide={true}
           style={{padding:"0px"}}
           content={
@@ -101,9 +105,9 @@ class AccountInfo extends Component {
         />
       </div>
     ):(
-      <div>
+      <div  >
         <a onClick={this.onOpenDialog}style={{marginRight:'5px'}}>สมัครใหม่</a>| 
-        <a onClick={this.onDgSigninOpenDialog} style={{marginLeft:'5px'}}>ลงชื่อใช้งาน</a>
+        <a onClick={this.onDgSigninOpenDialog} style={{marginLeft:'5px'}}>เข้าสู่ระบบ</a>
       </div>
     )
 
@@ -111,32 +115,32 @@ class AccountInfo extends Component {
 
 		return (
 
-      <Grid textAlign='center' style={{fontSize:'12px'}} verticalAlign='middle'>
-        <Grid.Row >
-          <Grid.Column width="3" className="accIcon">
+      <Grid textAlign='center' style={{fontSize:'12px'}}  verticalAlign='middle'>
+        <Grid.Row verticalAlign='middle' >
+          <Grid.Column width="5" textAlign='right' style={{paddingRight:'0px'}} >
             <icons.MdAccountCircle size="29" />
           </Grid.Column>
-          <Grid.Column textAlign='left' width="13" className="accTxt">
+          <Grid.Column textAlign='left'  width="11"  className="accTxt">
+           
             {showUser}
             <MuiDialog 
-              isOpen={this.state.dialogOpen}
+              isOpen={signUp.isOpen}
               onCloseDialog={this.onCloseDialog}
               clickBack={this.state.clickBack}
-              size="sm"
-            >
-              <SignupForm 
+              size="sm"  >
+              <SignupFullForm 
                 onCloseDialog={this.onCloseDialog} 
                 onSetClickBack={this.onSetClickBack}
               />
             </MuiDialog>
 
             <MuiDialog 
-              isOpen={this.state.dgSigninOpen}
+              isOpen={signIn.isOpen}
               onCloseDialog={this.onDgSigninCloseDialog}
               clickBack={this.state.dgSigninclickBack}
               size="sm"
               fixWidth="fixWidth"
-            >
+              >
               <SigninForm 
                 onCloseDialog={this.onDgSigninCloseDialog} 
                 onSetClickBack={this.onDgSigninSetClickBack}
@@ -155,9 +159,12 @@ class AccountInfo extends Component {
 const mapStateToProps = (state) => {
   return {
     userInf: state.User,
-    historya:state.RouteInfo.history
+    historya:state.RouteInfo.history,
+    signIn:state.Dialog.signIn,
+    signUp:state.Dialog.signUp
   }
 }
 
-export default connect(mapStateToProps, {logOut})(AccountInfo);
+
+export default connect(mapStateToProps, {logOut,setSignInOpen,setSignUpOpen})(AccountInfo);
 

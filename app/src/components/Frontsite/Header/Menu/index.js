@@ -11,7 +11,7 @@ class MenuHeader extends Component {
     this.state = {
       "items":[
         {name:"หน้าหลัก",link:"/"},
-        {name:"เปิดจอง แด่..รัก",link:"/preorder1"},
+        {name:"เปิดจอง แด่..รัก",link:"/product/แด่...รัก by Snufflehp"},
         {name:"แจ้งโอนเงิน",link:"/tran_status"},
         //{name:"ชำระเงิน",link:"/payment"},
         {name:"ติดต่อเรา",link:"/contact"}

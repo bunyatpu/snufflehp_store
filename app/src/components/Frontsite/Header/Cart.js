@@ -7,7 +7,7 @@ export default class Cart extends Component {
 	render() {
 
 
-    let cNow = 8;
+    let cNow = 0;
 
 		return (
 

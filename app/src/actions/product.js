@@ -7,6 +7,7 @@
 //   getProductPromote
 // } from '../firebase/firebase'
 import database from 'firebase-database';
+import productDb from '../firebase/products';
 import actionType from '../constants'
 
 export const loadProducts = () => {
@@ -27,6 +28,30 @@ export const loadProducts = () => {
           type: actionType.LOAD_PRODUCT_FAILED,
           payload: error
         })
+      })
+  }
+}
+
+export const getProductByName = (name) => {
+  return (dispatch) => {
+
+    productDb.getProductByName(name)
+      .then( (products) => {
+
+        let prodVal = (products.val() === null) ? {}:Object.values(products.val())[0];
+
+        dispatch({
+          type: actionType.LOAD_PRODUCT_BY_NAME,
+          payload: prodVal
+        })
+      })
+      .catch(error => {
+
+        console.log('error=>',error)
+        // dispatch({
+        //   type: actionType.LOAD_PRODUCT_FAILED,
+        //   payload: error
+        // })
       })
   }
 }

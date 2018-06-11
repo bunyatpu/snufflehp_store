@@ -5,6 +5,8 @@ import Products from './Products'
 import ReqProcess from './ReqProcess'
 import User from './User'
 import RouteInfo from './RouteInfo'
+import ProductDetail from './ProductDetail'
+import Dialog from './Dialog'
 import { reducer as formReducer } from 'redux-form'
 
 const reducer = combineReducers({
@@ -12,6 +14,8 @@ const reducer = combineReducers({
   ReqProcess,
   User,
   RouteInfo,
+  ProductDetail,
+  Dialog,
   form: formReducer,
   session: sessionReducer
 })

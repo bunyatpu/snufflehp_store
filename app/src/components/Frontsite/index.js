@@ -42,9 +42,13 @@ export default class Frontsite extends Component {
 						<Grid.Column>
 
 							{
-								routeMap.frontSite.map((rt, i) => (
-									<Route key={i} exact={rt.exact} path={rt.path} component={RouteInfo(rt.component)}/>
-								))
+								routeMap.frontSite.map((rt, i) => {
+									
+									let params = (rt.params !== undefined)? '/:'+rt.params.join('/:'):'';
+									const path = rt.path+params;
+
+									return <Route key={i} exact={rt.exact} path={path} component={RouteInfo(rt.component)}/>
+								})
 							}
 							
 						</Grid.Column>

@@ -17,6 +17,8 @@ import {orange,green} from '@material-ui/core/colors';
 import {signIn} from '../../../firebase/auth';
 import { connect } from 'react-redux'
 import {loadUserInf} from '../../../actions/User';
+import {setSignUpOpen} from '../../../actions/DialogAct';
+//import {setSignInOpen} from '../../../actions/DialogAct';
 // import cookie from 'react-cookies'
 
 
@@ -179,6 +181,15 @@ class SignInForm extends React.Component {
     }
   }
 
+  handelSignup = () => {
+    this.closeDialog()
+    setTimeout(()=>{
+
+      this.props.setSignUpOpen({isOpen:true,showAddr:true})
+    }, 200)
+    
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -188,8 +199,11 @@ class SignInForm extends React.Component {
       <div className={classes.container}>
        
         <div style={{display:(showMainForm)?"block":"none",width:'90%',marginLeft:'15px'}}>
-        
-          <h3 style={{paddingLeft:'8px',marginBottom:"0",color:"#5a5a59"}}>เข้าสู่ระบบ</h3>
+          <div style={{paddingBottom:"50px"}}>
+            <div style={{float:"left",fontSize:'24px',paddingLeft:'8px',marginBottom:"0",color:"#5a5a59"}}>เข้าสู่ระบบ</div>
+            <div onClick={this.handelSignup} className="setCursor" style={{float:"right",fontSize:'18px',marginBottom:"0",color:"rgb(255, 151, 0)"}}>สมัครใหม่</div>
+          </div>
+          
           <FormControl fullWidth error={this.state.req_email} className={classes.formControl}>
             <InputLabel 
               htmlFor="Email"
@@ -233,7 +247,7 @@ class SignInForm extends React.Component {
             <FormHelperText  style={{display:(this.state.req_password)?'block':'none'}} >{this.state.txt_error_pass}</FormHelperText>
           </FormControl>
           
-          <Grid style={{marginTop:'10px'}} container justify="flex-end">
+          <Grid style={{marginTop:'60px'}} container justify="flex-end">
             <Button 
               disabled={loading}
               variant="raised" 
@@ -268,5 +282,6 @@ SignInForm.propTypes = {
 };
 
 
+
 //export default withCookies(withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm)));
-export default withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm));
+export default withStyles(styles)( connect(()=>({}), {loadUserInf,setSignUpOpen})(SignInForm));

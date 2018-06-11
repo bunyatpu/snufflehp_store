@@ -1,3 +1,7 @@
+body{
+  background: #f5f5f5;
+}
+
 .App {
   text-align: center;
 }
@@ -192,5 +196,13 @@ img.report-img {
 
 .MuiModal-hidden-53{
   visibility: unset !important;
+}
+
+.userNameAccount:hover{
+  cursor:pointer;
+}
+
+.setCursor:hover{
+  cursor:pointer;
 }
 

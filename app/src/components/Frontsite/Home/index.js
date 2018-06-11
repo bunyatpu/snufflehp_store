@@ -17,9 +17,10 @@ class Home extends Component {
   }
 
 
+
 	render() {
 
-    //let {history} = this.props;
+    let {history} = this.props;
     //console.log('home props:',this.props);
     // console.log('===>render stateAll props:',this.props.stateAll);
     // console.log('===>render products props:',this.props.products);
@@ -37,7 +38,12 @@ class Home extends Component {
         <Grid.Row>
           <Grid.Column width="16" >
             <Container>
-              <Button color='teal' size="big">สั่งจอง แด่..รัก เดียวนี้</Button>
+              <Button 
+                onClick={()=>history.push('/product/แด่...รัก by Snufflehp')}
+                color='teal' 
+                size="big">
+                สั่งจอง แด่..รัก เดียวนี้
+              </Button>
             </Container>
             <Container><Divider /></Container>
           </Grid.Column>
