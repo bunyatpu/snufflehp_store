@@ -126,7 +126,7 @@ class AccountInfo extends Component {
             <MuiDialog 
               isOpen={signUp.isOpen}
               onCloseDialog={this.onCloseDialog}
-              clickBack={this.state.clickBack}
+              clickBack={true}
               size="sm"  >
               <SignupFullForm 
                 onCloseDialog={this.onCloseDialog} 

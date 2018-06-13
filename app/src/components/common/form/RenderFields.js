@@ -46,7 +46,7 @@ export const RenderTextAreaField = ({
   //console.log('placeholder',placeholder)
   let txt_pHolder = (placeholder) ? placeholder:label;
   return  (
-    <Form.Field  error={touched && error} >
+    <Form.Field  error={touched && (error !== undefined)} >
       <label>{label}</label>
       <TextArea 
         {...input} {...custom}
@@ -56,6 +56,8 @@ export const RenderTextAreaField = ({
   )
 }
 
+
+
 export const renderDropdownField = ({
   input,
   label,
@@ -64,17 +66,32 @@ export const renderDropdownField = ({
   ...custom
 }) => {
 
+  let txt_pHolder = (custom.placeholder) ? custom.placeholder:label;
+  let txt_error  = (typeof error === 'string') ? error:"";
+
+  //console.log('input ',input)
+
   return (
-    <Form.Field  error={touched && error} >
+    <Form.Field  error={touched && (error !== undefined)} >
       <label>{custom.toplabel}</label>
       <Dropdown
         selection
-        onChange={(event,{index,value}) => {
-          input.onChange(value)
+        selectOnBlur={false}
+        value={input.value}
+        onChange={(event,obj) => {
+          // console.log('event',event.target)
+          //console.log('internal obj',obj)
+          input.onChange(obj.value)
         }}
         {...custom}
-        placeholder={custom.toplabel}
+        placeholder={txt_pHolder}
       />
+
+      {touched &&
+        ((error &&  
+          <Label basic color='red' pointing>
+          {txt_error}
+          </Label>) )}
     </Form.Field>
   )
 }

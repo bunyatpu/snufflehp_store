@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import { Field, reduxForm,SubmissionError } from 'redux-form'
+import { Field, reduxForm,SubmissionError,change } from 'redux-form'
 
 import { 
   Form,
@@ -11,12 +11,15 @@ import {
 } from 'semantic-ui-react'
 
 import {
-  RenderTextField
+  RenderTextField,
+  renderDropdownField
 } from './RenderFields'
 import { signUp } from '../../../firebase/auth';
 import * as icons from 'react-icons/lib/md';
 import { connect } from 'react-redux'
 import { addNewUser ,loadUserInf} from '../../../actions/User';
+// import JQL from 'jqljs'
+const datas = require('../../../data.json');
 
 
 
@@ -74,24 +77,56 @@ class SignupFullForm extends Component {
 
       loading: false,
       success: false,
-      showMainForm:true
+      showMainForm:true,
+      //db:[],
+      optionZipcode:[],
+      optionSubDistrict:[],
+      optionDistrict:[],
+      optionProvince:[],
+      valueZipcode:'',
+      valueSubDistrict:'',
+      valueDistrict:'',
+      valueProvince:''
+
     }
+    //console.log('const')
   }
 
-
+  componentDidMount(){
+    //console.log('componentDidMount')
+    const preData = this.preData();
+    //const DB = new JQL(preData);
+    this.setState({
+      preData
+    });
+   
+  }
+  // componentWillMount(){
+  //   console.log('componentWillMount')
+  // }
 
   onSubmit = (value) =>{
 
     this.props.onSetClickBack(true)
     this.setState({success: false,loading: true})
 
-    //console.log('onSubmit')
-    //console.log('value',value)
-    return signUp(value).then(res => {
+    // console.log('onSubmit')
+    // console.log('value',value)
 
-       // console.log('signUp succ',res);
-        // this.setState({success: true,loading: false,showMainForm:false})
-        // this.props.onSetClickBack(false)
+    //converse addr
+    const splAddr = value.postCode.split('_')
+
+    value.address = {}
+    value.address.addr = value.addr
+    value.address.postCode = splAddr[3];
+    value.address.sub_district = splAddr[0];
+    value.address.district = splAddr[1];
+    value.address.province = splAddr[2];
+
+
+    //--
+
+    return signUp(value).then(res => {
 
         this.props.addNewUser(Object.assign(value, {authId:res.uid}))
         .then(resUser => {
@@ -158,9 +193,126 @@ class SignupFullForm extends Component {
 
   }
 
+  preData = () =>{
+
+    const expanded = [];
+    datas.forEach((provinceEntry) => {
+      const province = provinceEntry[0];
+      const amphurList = provinceEntry[1];
+      amphurList.forEach((amphurEntry) => {
+        const amphur = amphurEntry[0];
+        const districtList = amphurEntry[1];
+        districtList.forEach((districtEntry) => {
+          const district = districtEntry[0];
+          const zipCodeList = districtEntry[1];
+          zipCodeList.forEach((zipCode) => {
+            expanded.push({
+              d: district,
+              a: amphur,
+              p: province,
+              z: zipCode,
+            });
+          });
+        });
+      });
+    });
+
+    //console.log('all data',expanded);
+    return expanded;
+
+  }
+
+  searchAddr = (type,searchStr) =>{
+
+    let res = [];
+    // let searchStr = '57000'
+    // let type = 'z';
+    try {
+      // res = this.state.db.select('*').where(type)
+      //         .match(`^${searchStr}`)
+      //         .orderBy(type)
+      //         .fetch();
+
+      res = this.state.preData.filter((model)=>{
+        //console.log(model[type]," === ",searchStr)
+        //return model[type] == searchStr
+        const regex = RegExp(searchStr,'gi');
+        return regex.test(model[type])
+      })
+    } catch (e) {
+      return [];
+    }
+
+    //console.log('res',res)
+    let mapZip = res
+        .filter((item, i) => i < 100)
+        .map((obj,key)=>{
+          
+          const txt = obj.d+' > '+obj.a+' > '+obj.p+' > '+obj.z
+          const valueTxt = obj.d+'_'+obj.a+'_'+obj.p+'_'+obj.z
+          //const resTxt = txt.replace(reg, '<b>'+searchQuery+'</b>');
+          return {key:key,text:obj[type], value:valueTxt,content:txt}
+        })
+    
+    let optName = '';
+    switch(type){
+      case 'd':
+        optName = 'optionSubDistrict'
+      break;
+      case 'a':
+        optName = 'optionDistrict'
+      break;
+      case 'p':
+        optName = 'optionProvince'
+      break;
+      case 'z':
+        optName = 'optionZipcode'
+      break;
+      default:
+
+      break;
+    }
+    this.setState({[optName]:mapZip})
+
+    //return possibles
+
+  }
+
+  handleSearchChange = (type) => (e, { searchQuery }) =>{
+
+    //console.log('searchQuery type',type)
+    this.searchAddr(type,searchQuery)
+    //var reg = new RegExp(searchQuery,'gi');
+    //5700
+    
+    //console.log('res',res)
+  }
+
+  handleChangeOption = (e,value) => {
+   
+    //console.log('handleChangeOption value',value);
+
+    const arrAddr = value.split('_');
+    //console.log('arrAddr',arrAddr)
+    this.searchAddr('d',arrAddr[0])
+    this.searchAddr('a',arrAddr[1])
+    this.searchAddr('p',arrAddr[2])
+    this.searchAddr('z',arrAddr[3])
+
+    this.props.change('sub_district',value)
+    this.props.change('district',value)
+    this.props.change('province',value)
+    this.props.change('postCode',value)
+
+
+  }
+
+
   render(){
 
+    //console.log('render');
     //console.log('props',this.props);
+    
 
     let style = {
       row:{
@@ -174,8 +326,23 @@ class SignupFullForm extends Component {
 
     }
 
-    let {loading,showMainForm} = this.state;
+    let {
+      loading,
+      showMainForm,
+      optionZipcode,
+      optionSubDistrict,
+      optionDistrict,
+      optionProvince
+      // valueZipcode,
+      // valueSubDistrict,
+      // valueDistrict,
+      // valueProvince,
+    } = this.state;
     let {handleSubmit,onCloseDialog,signUp} = this.props
+
+    //const friendOptions = []
+    //console.log('valueSubDistrict',valueSubDistrict)
+    //console.log('==>formSignup state ',this.props.formSignup  );
 
     let addr_form = (!signUp.showAddr)? "":  
         (
@@ -186,9 +353,46 @@ class SignupFullForm extends Component {
                 <Grid.Column width={16}>
                   <Field 
                       name="postCode" 
-                      component={RenderTextField} 
+                      component={renderDropdownField} 
                       label={false}
+                      options={optionZipcode}
                       placeholder="รหัสไปรษณีย์"
+                      onChange={this.handleChangeOption}
+                      search
+                      noResultsMessage='พิมพ์รหัสไปรษณีย์ เพื่อค้นหา'
+                      onSearchChange={this.handleSearchChange('z')}
+                    />
+                
+                </Grid.Column >
+              </Grid.Row>
+              
+              <Grid.Row style={style.row}>
+                <Grid.Column width={16}>
+                   <Field 
+                      name="sub_district" 
+                      component={renderDropdownField} 
+                      label={false}
+                      options={optionSubDistrict}
+                      placeholder="ตำบล"
+                      onChange={this.handleChangeOption}
+                      search
+                      noResultsMessage='พิมพ์ชื่อตำบลเพื่อค้นหา'
+                      onSearchChange={this.handleSearchChange('d')}
+                    />
+                </Grid.Column >
+              </Grid.Row>
+              <Grid.Row style={style.row}>
+                <Grid.Column width={16}>
+                   <Field 
+                      name="district" 
+                      component={renderDropdownField} 
+                      label={false}
+                      options={optionDistrict}
+                      placeholder="อำเภอ"
+                      onChange={this.handleChangeOption}
+                      search
+                      noResultsMessage='พิมพ์ชื่ออำเภอเพื่อค้นหา'
+                      onSearchChange={this.handleSearchChange('a')}
                     />
                 </Grid.Column >
               </Grid.Row>
@@ -196,32 +400,21 @@ class SignupFullForm extends Component {
                 <Grid.Column width={16}>
                   <Field 
                       name="province" 
-                      component={RenderTextField} 
+                      component={renderDropdownField} 
                       label={false}
+                      options={optionProvince}
                       placeholder="จังหวัด"
+                      onChange={this.handleChangeOption}
+                      search
+                      noResultsMessage='พิมพ์ชื่อจังหวัดเพื่อค้นหา'
+                      onSearchChange={this.handleSearchChange('p')}
                     />
                 </Grid.Column >
               </Grid.Row>
-              <Grid.Row style={style.row}>
-                <Grid.Column width={16}>
-                  <Field 
-                      name="district" 
-                      component={RenderTextField} 
-                      label={false}
-                      placeholder="อำเภอ"
-                    />
-                </Grid.Column >
-              </Grid.Row>
-              <Grid.Row style={style.row}>
-                <Grid.Column width={16}>
-                  <Field 
-                      name="sub_district" 
-                      component={RenderTextField} 
-                      label={false}
-                      placeholder="ตำบล"
-                    />
-                </Grid.Column >
-              </Grid.Row>
+
+              
+             
+             
               <Grid.Row style={style.row}>
                 <Grid.Column width={16}>
                   <Field 
@@ -328,7 +521,8 @@ class SignupFullForm extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    signUp:state.Dialog.signUp
+    signUp:state.Dialog.signUp,
+    formSignup:state.form.fullSignup
   }
 }
 
@@ -340,7 +534,7 @@ const mapStateToProps = (state) => {
 //   }
 // }
 
-export default connect(mapStateToProps, { addNewUser,loadUserInf })(reduxForm({form:'fullSignup',validate})(SignupFullForm))
+export default connect(mapStateToProps, { addNewUser,loadUserInf,change })(reduxForm({form:'fullSignup',validate})(SignupFullForm))
 
 
 /* <Grid.Row style={style.row_devide} >
@@ -348,3 +542,7 @@ export default connect(mapStateToProps, { addNewUser,loadUserInf })(reduxForm({f
   <Divider />
 </Grid.Column >
 </Grid.Row> */
+
+
+
+

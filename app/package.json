@@ -36,6 +36,7 @@
     "html-webpack-plugin": "2.29.0",
     "ignore-styles": "^5.0.1",
     "jest": "20.0.4",
+    "jqljs": "^0.3.2",
     "lodash": "^4.17.4",
     "morgan": "^1.8.1",
     "mz": "^2.7.0",

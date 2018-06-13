@@ -6,7 +6,8 @@ const addUser = (data) => {
     userName:data.userName,
     email:data.email,
     authId:data.authId,
-    tel:""
+    tel:"",
+    address:(data.address !== undefined)?data.address:{}
   }
   var fbRef = firebase.database().ref('users')
   return fbRef.push(model);
