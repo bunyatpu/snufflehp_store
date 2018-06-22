@@ -1,5 +1,6 @@
 import Home from '../components/Frontsite/Home'
 import Product from '../components/Frontsite/Product'
+import User from '../components/Frontsite/User'
 
 export default {
 
@@ -26,6 +27,12 @@ export default {
 			path:'/product',
 			component: Product,
 			params:['productName'],
+			exact:false,
+			routes:[]
+		},
+		{
+			path:'/user',
+			component: User,
 			exact:false,
 			routes:[]
 		}

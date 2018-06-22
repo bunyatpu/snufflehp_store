@@ -19,9 +19,14 @@ export const loadUserInf = (uid,callback) => {
     database.loadUser(uid)
     .then( (snap) => {
 
-      let userInf = (snap.val() === null) ? {}:Object.values(snap.val())[0];
-      //console.log('userInf',Object.entries(snap.val()))
-
+      let userInf =  {}
+      //console.log('snap.val()',snap.val())
+      if(snap.val() !== null){
+        userInf = Object.values(snap.val())[0];
+        userInf.id = Object.keys(snap.val())[0];
+      }
+      
+      //console.log('userInf',userInf);
       dispatch({
         type: actionType.LOAD_USER_INFO,
         payload: userInf
@@ -73,6 +78,102 @@ export const addNewUser = (datas) => {
     })
   }
 
+  
+}
+
+
+export const updateUser = (uid,data) => {
+  return (dispatch) =>{
+    //return database.updateUser(uid,data)
+    //console.log('uid',uid)
+    return new Promise((resolve,reject) => {
+      database.updateUser(uid,data)
+      .then((resUp)=>{
+
+        return resUp
+      
+      })
+      .then((resUp)=>{
+        return database.loadUser(data.authId)
+       
+      })
+      .then( (snap) => {
+
+        let userInf =  {}
+        if(snap.val() !== null){
+          userInf = Object.values(snap.val())[0];
+          userInf.id = Object.keys(snap.val())[0];
+        }
+
+        dispatch({
+          type: actionType.LOAD_USER_INFO,
+          payload: userInf
+        })
+        
+        //set localstorage
+        cookie.save('__session', {userInf}, { path: '/' })
+        
+        resolve(uid)
+
+      })
+      .catch((err)=>{
+        reject(err)
+      })
+    })
+  }
+}
+
+export const ___updateUser = (uid,data) => {
+  return (dispatch) =>{
+    //return database.updateUser(uid,data)
+    //console.log('uid',uid)
+    return new Promise((resolve,reject) => {
+      database.updateUser(uid,data).then((resUp)=>{
+
+        database.loadUser(data.authId).then( (snap) => {
+
+          let userInf =  {}
+          if(snap.val() !== null){
+            userInf = Object.values(snap.val())[0];
+            userInf.id = Object.keys(snap.val())[0];
+          }
+
+          dispatch({
+            type: actionType.LOAD_USER_INFO,
+            payload: userInf
+          })
+          
+          //set localstorage
+          cookie.save('__session', {userInf}, { path: '/' })
+          
+          resolve(uid)
+
+        })
+        .catch(error => {
+          reject(error)
+        })
+      
+      }).catch((err)=>{
+        reject(err)
+      })
+    })
+  }
+}
+
+export const updateAddr = (uid, address) =>{
+  return (dispatch) => {
+    return new Promise((resolve,reject) =>{
+      database.updateAddr(uid, address)
+      .then(resUp => {
+        console.log('updateAddr resUp',resUp);
+        resolve(uid)
+      })
+      .catch(error =>{
+        console.log('updateAddr error',error);
+        reject(error)
+      })
+    })
+  }
   
 }
 

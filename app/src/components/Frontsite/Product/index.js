@@ -2,6 +2,8 @@ import React,{Component} from 'react'
 import { connect } from 'react-redux'
 import { getProductByName } from '../../../actions/product';
 import {setSignInOpen} from '../../../actions/DialogAct';
+import AddrForm from '../../../components/common/form/AddrForm'
+import MuiDialog from '../../../components/common/dialog/MuiDialog'
 import { 
   Header, 
   Divider, 
@@ -21,7 +23,10 @@ class Product extends Component {
   constructor(props){
     super(props);
     this.state = {
-      qty:1
+      qty:1,
+      addrForm:{
+        isOpen:false
+      }
     }
   }
 
@@ -54,25 +59,52 @@ class Product extends Component {
   onBuy = () =>{
 
     const {userInf,setSignInOpen} = this.props;
-    console.log('userInf',userInf);
+    // console.log('userInf',userInf);
+    // console.log('userInf',userInf.address);
+
     //check login 
     if(userInf.authId === undefined){
-      console.log('no login');
+      //console.log('no login');
       setSignInOpen(true);
     }else{
+
+      if( !(userInf.address !== undefined && userInf.address.postCode !== undefined) ){
+        this.onOpenDialog()
+      }
 
     }
 
     //check address
+    
 
+  }
+
+  onOpenDialog = () => {
+    //console.log('onCloseDialog')
+    //this.props.setSignUpOpen(false)
+    this.setState({
+      addrForm:{
+        isOpen:true
+      }
+    })
+  }
+
+  onCloseDialog = () => {
+    //console.log('onCloseDialog')
+    //this.props.setSignUpOpen(false)
+    this.setState({
+      addrForm:{
+        isOpen:false
+      }
+    })
   }
 
 
 
   render(){
 
-    let { qty } = this.state;
-    let { pModel } = this.props;
+    let { qty,addrForm } = this.state;
+    let { pModel ,userInf} = this.props;
 
     //console.log(pModel);
     let submitTypeTxt = "สั่งจองสินค้า"
@@ -130,6 +162,17 @@ class Product extends Component {
             </Segment>
           </Grid.Column>
         </Grid.Row>
+
+        <MuiDialog 
+          isOpen={addrForm.isOpen}
+          onCloseDialog={this.onCloseDialog}
+          clickBack={true}
+          size="sm"  >
+          <AddrForm 
+            onCloseDialog={this.onCloseDialog} 
+            userInf={userInf}
+          />
+        </MuiDialog>
        
       </Grid>
     )

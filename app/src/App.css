@@ -206,3 +206,7 @@ img.report-img {
   cursor:pointer;
 }
 
+.setBorderInput input {
+  border-color: rgb(143, 143, 146) !important;
+}
+

@@ -10,15 +10,18 @@ export const RenderTextField = ({
   
 
   let txt_pHolder = (custom.placeholder) ? custom.placeholder:label;
-  let txt_label = (label) ? <label>{custom.toplabel}</label>:false;
+  let txt_label = (custom.toplabel) ? 
+    <label style={{color:'rgb(173, 172, 172)',textAlign:'left',fontWeight:'10'}}>{custom.toplabel}</label>
+    :false;
 
   let txt_error  = (typeof error === 'string') ? error:"";
-  //console.log('error',error)
+  //console.log('error input',input)
 
   return (
     <Form.Field error={touched && (error !== undefined)} >
       {txt_label}
       <Input
+        value={input.value}
         label={label}
         {...input} {...custom}
         placeholder={txt_pHolder}
@@ -73,7 +76,7 @@ export const renderDropdownField = ({
 
   return (
     <Form.Field  error={touched && (error !== undefined)} >
-      <label>{custom.toplabel}</label>
+      <label style={{color:'rgb(173, 172, 172)',textAlign:'left',fontWeight:'10'}}>{custom.toplabel}</label>
       <Dropdown
         selection
         selectOnBlur={false}

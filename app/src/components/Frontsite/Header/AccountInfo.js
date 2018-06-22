@@ -84,12 +84,17 @@ class AccountInfo extends Component {
     const showUser = (userInf && userInf.userName !== undefined) ? (
       <div >
         <Popup
-          trigger={<span className="userNameAccount" style={{fontSize:"18px"}}>{userInf.userName}</span>}
+          trigger={
+            <span className="userNameAccount" style={{fontSize:"18px"}}>
+              <icons.MdAccountCircle style={{marginRight:'3px'}} size="29" />
+              {userInf.userName}
+            </span>
+          }
           wide={true}
           style={{padding:"0px"}}
           content={
             <Menu vertical>
-              <Menu.Item name='myAccount'  >
+              <Menu.Item name='myAccount' onClick={()=> this.props.historya.push('/user')}  >
                 <span>บัญชีของฉัน</span>
               </Menu.Item>
 
@@ -117,11 +122,7 @@ class AccountInfo extends Component {
 
       <Grid textAlign='center' style={{fontSize:'12px'}}  verticalAlign='middle'>
         <Grid.Row verticalAlign='middle' >
-          <Grid.Column width="5" textAlign='right' style={{paddingRight:'0px'}} >
-            <icons.MdAccountCircle size="29" />
-          </Grid.Column>
-          <Grid.Column textAlign='left'  width="11"  className="accTxt">
-           
+          <Grid.Column style={{paddingLeft:'3px'}} textAlign='left'  width="11"  className="accTxt">
             {showUser}
             <MuiDialog 
               isOpen={signUp.isOpen}

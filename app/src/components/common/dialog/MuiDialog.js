@@ -19,6 +19,9 @@ const styles = theme => ({
   fixWidth:{
     maxWidth:"500px"
   },
+  fixWidth2:{
+    maxWidth:"650px"
+  },
   fixPaper:{
     border:"3px solid #00b5ad"
   }

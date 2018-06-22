@@ -12,15 +12,25 @@ const addUser = (data) => {
   var fbRef = firebase.database().ref('users')
   return fbRef.push(model);
 
-  
+}
 
-  // return new Promise((resolve, reject)=>{
-  //   fbRef.push(model).then((resSave)=>{
-  //       resolve(model)
-  //     }).catch((error)=>{
-  //       reject(error)
-  //     })
-  // })
+const updateUser = (uid,data) =>{
+  //console.log('updateUser uid',uid)
+  var fbRef = firebase.database().ref('users').child(uid)
+
+  return fbRef.update({
+    userName:data.userName,
+    tel:data.tel
+  })
+}
+
+const updateAddr = (uid,address) => {
+
+  //console.log('updateAddr',uid,address)
+  var fbRef = firebase.database().ref('users').child(uid)
+  //var resUp = fbRef.update({address});
+  //console.log('--->',resUp)
+  return fbRef.update({address})
 
 }
 
@@ -32,5 +42,7 @@ const loadUser = (userId) =>{
 
 module.exports = {
   addUser,
-  loadUser
+  loadUser,
+  updateAddr,
+  updateUser
 }
