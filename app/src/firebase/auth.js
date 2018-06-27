@@ -16,8 +16,23 @@ const signIn = (data) =>{
   return firebase.auth().signInWithEmailAndPassword(email,password)
 }
 
+const currentUser = () =>{
+  //return firebase.auth().currentUser;
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in.
+      console.log('User is signed in.',user)
+    } else {
+      // No user is signed in.
+    }
+  });
+
+  return '';
+}
+
 module.exports = {
   signUp,
-  signIn
+  signIn,
+  currentUser
 }
 

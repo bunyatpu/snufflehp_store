@@ -4,9 +4,16 @@ import Logo from './Logo';
 import Search from "./Search"
 import Cart from "./Cart"
 import AccountInfo from "./AccountInfo"
+//import auth from "../../../firebase/auth"
 
 export default class Header extends Component {
 
+  // constructor(props){
+  //   super(props)
+  //   const user = auth.currentUser();
+
+  //   console.log('user',user);
+  // }
 
 	render() {
 
