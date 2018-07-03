@@ -15,7 +15,7 @@ const addUser = (data) => {
 }
 
 const updateUser = (uid,data) =>{
-  //console.log('updateUser uid',uid)
+  //console.log('updateUser uid',uid,data)
   var fbRef = firebase.database().ref('users').child(uid)
 
   return fbRef.update({
@@ -34,10 +34,10 @@ const updateAddr = (uid,address) => {
 
 }
 
-const loadUser = (userId) =>{
+const loadUser = (authId) =>{
   //console.log('userId',userId);
   var fbRef = firebase.database().ref('users')
-  return fbRef.orderByChild("authId").equalTo(userId).once('value')
+  return fbRef.orderByChild("authId").equalTo(authId).once('value')
 }
 
 module.exports = {

@@ -12,7 +12,8 @@ import {
   Input,
   Label,
   Button,
-  Image
+  Image,
+  Breadcrumb
 } from 'semantic-ui-react'
 import { Icon } from 'semantic-ui-react'
 
@@ -99,8 +100,6 @@ class Product extends Component {
     })
   }
 
-
-
   render(){
 
     let { qty,addrForm } = this.state;
@@ -111,7 +110,18 @@ class Product extends Component {
 
     return (
       <Grid container padded="vertically"  >
-        <Grid.Row   columns={2}>
+        <Grid.Row>
+          <Grid.Column textAlign="left"  width={16}>
+            <Breadcrumb>
+              <Breadcrumb.Section link>หน้าหลัก</Breadcrumb.Section>
+              <Breadcrumb.Divider icon='right angle' />
+              <Breadcrumb.Section link>สินค้าทั้งหมด</Breadcrumb.Section>
+              <Breadcrumb.Divider icon='right angle' />
+              <Breadcrumb.Section active style={{color:'#757575'}}>{pModel.name}</Breadcrumb.Section>
+            </Breadcrumb>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row columns={2} style={{paddingTop:"0px"}}>
           <Grid.Column  width={6} style={{paddingRight:"4px"}}>
             <Segment style={{height:"500px"}} >
               <div>

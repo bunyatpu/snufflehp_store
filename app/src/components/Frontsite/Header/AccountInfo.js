@@ -86,8 +86,8 @@ class AccountInfo extends Component {
         <Popup
           trigger={
             <span className="userNameAccount" style={{fontSize:"18px"}}>
-              <icons.MdAccountCircle style={{marginRight:'3px'}} size="29" />
-              {userInf.userName}
+              <icons.MdAccountCircle  style={{marginRight:'3px'}} size="29" />
+              <span>{userInf.userName}</span>
             </span>
           }
           wide={true}
@@ -122,7 +122,7 @@ class AccountInfo extends Component {
 
       <Grid textAlign='center' style={{fontSize:'12px'}}  verticalAlign='middle'>
         <Grid.Row verticalAlign='middle' >
-          <Grid.Column style={{paddingLeft:'3px'}} textAlign='left'  width="11"  className="accTxt">
+          <Grid.Column style={{paddingLeft:'3px'}} textAlign='left'  width="16"  className="accTxt">
             {showUser}
             <MuiDialog 
               isOpen={signUp.isOpen}

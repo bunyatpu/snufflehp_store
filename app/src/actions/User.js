@@ -7,58 +7,108 @@
 //   getProductPromote
 // } from '../firebase/firebase'
 import database from '../firebase/user';
+import auth from '../firebase/auth';
 import actionType from '../constants'
 import cookie from 'react-cookies'
 
 //import { sessionService } from 'redux-react-session';
 
+export const loadUserInf =  (authId,callback) => {
+  //console.log('User->loadUserInf',uid)
+  return (dispatch) =>{
+    return Promise.resolve().then(()=>{
+      return new Promise((resolve,reject)=>{
+       
+        database.loadUser(authId).then( (snap) => {
+  
+          let userInf =  {}
+          //console.log('snap.val()',snap.val())
+          if(snap.val() !== null){
+            userInf = Object.values(snap.val())[0];
+            userInf.id = Object.keys(snap.val())[0];
+          }
+          //console.log('User->loadUser',userInf)
+          resolve(userInf)
+  
+        }).catch(error => {
+          //console.log('__session',error)
+          reject(error)
+        })
+  
+      })
+    }).then((userInf)=>{
+      return new Promise((resolve,reject)=>{
+        auth.currentUser().then((authInfo)=>{
+          
+          userInf.authInfo = authInfo
+          //console.log('-->currentUser userInf',userInf)
+          dispatch({
+            type: actionType.LOAD_USER_INFO,
+            payload: userInf
+          })
+          
+          if(callback){
+            callback(userInf);
+          }
+          
+          //set localstorage
+          //console.log('currentUser',userInf);
 
-export const loadUserInf = (uid,callback) => {
+          cookie.save('__session', {userInf}, { path: '/' })
+
+
+          resolve(userInf)
+        }).catch((error)=>{
+
+          //console.log('error currentUser',error);
+          reject(error)
+        })
+      })
+    })
+  }
+
+}
+
+
+export const _loadUserInf = (uid,callback) => {
   return (dispatch) => {
 
-    database.loadUser(uid)
-    .then( (snap) => {
+    return new Promise((resolve,reject)=>{
 
-      let userInf =  {}
-      //console.log('snap.val()',snap.val())
-      if(snap.val() !== null){
-        userInf = Object.values(snap.val())[0];
-        userInf.id = Object.keys(snap.val())[0];
-      }
-      
-      //console.log('userInf',userInf);
-      dispatch({
-        type: actionType.LOAD_USER_INFO,
-        payload: userInf
+      database.loadUser(uid).then( (snap) => {
+
+        let userInf =  {}
+        //console.log('snap.val()',snap.val())
+        if(snap.val() !== null){
+          userInf = Object.values(snap.val())[0];
+          userInf.id = Object.keys(snap.val())[0];
+        }
+        
+        //console.log('userInf',userInf);
+        dispatch({
+          type: actionType.LOAD_USER_INFO,
+          payload: userInf
+        })
+        
+        if(callback){
+          callback(userInf);
+        }
+        
+        //set localstorage
+        cookie.save('__session', {userInf}, { path: '/' })
+
+        resolve(snap.val())
+
+      }).catch(error => {
+        console.log('__session',error)
+        reject(error)
       })
-      
-      if(callback){
-        //console.log('callback set cookie');
-        callback(userInf);
-      }
-      
 
-      //set localstorage
-      cookie.save('__session', {userInf}, { path: '/' })
-
-
-      //localStorage.setItem('userInfo', JSON.stringify(userInf));
-      //--
-      // sessionService.saveSession({ token:'1235456' })
-      // .then(() => {
-      //   sessionService.saveUser(userInf)
-      // });
-      // console.log('save cookie');
-      // Cookies.set('userInf', userInf, { path: '/' })
-      
     })
-    .catch(error => {
-      console.log('__session',error)
-    })
+    
 
   }
 
-  
 }
 
 export const addNewUser = (datas) => {
@@ -68,7 +118,7 @@ export const addNewUser = (datas) => {
 
       database.addUser(datas).then(resUser => {
         //console.log('resUser',resUser);
-        resolve(resUser)
+        resolve(datas)
   
       })
       .catch(errUser =>{
@@ -81,8 +131,28 @@ export const addNewUser = (datas) => {
   
 }
 
-
 export const updateUser = (uid,data) => {
+  return (dispatch) =>{
+    //return database.updateUser(uid,data)
+    //console.log('User->updateUser',uid)
+    return Promise.resolve().then(()=>{
+      return new Promise((resove,reject)=>{
+        //console.log('User->updateUser',uid)
+        database.updateUser(uid,data).then(resUp=>{
+          resove(resUp)
+        }).catch(err=>{
+          reject(err)
+        })
+      })
+    }).then((res)=>{
+      return loadUserInf(data.authId)(dispatch)
+    })
+
+    
+  }
+}
+
+export const __updateUser = (uid,data) => {
   return (dispatch) =>{
     //return database.updateUser(uid,data)
     //console.log('uid',uid)
@@ -165,11 +235,11 @@ export const updateAddr = (uid, address) =>{
     return new Promise((resolve,reject) =>{
       database.updateAddr(uid, address)
       .then(resUp => {
-        console.log('updateAddr resUp',resUp);
+        //console.log('updateAddr resUp',resUp);
         resolve(uid)
       })
       .catch(error =>{
-        console.log('updateAddr error',error);
+        //console.log('updateAddr error',error);
         reject(error)
       })
     })
@@ -203,6 +273,10 @@ export const logOut = (callback) => {
     // sessionService.deleteSession();
     // sessionService.deleteUser();
   }
+}
+
+export const updatePassword = (newPassword) => {
+  return database.updatePassword(newPassword)
 }
 
 

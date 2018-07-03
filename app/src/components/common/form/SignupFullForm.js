@@ -87,62 +87,32 @@ class SignupFullForm extends Component {
     this.props.onSetClickBack(true)
     this.setState({success: false,loading: true})
 
-    // console.log('onSubmit')
-    // console.log('value',value)
-
     //converse addr
     value.address = {}
     if(value.postCode && value.postCode !== undefined){
       const splAddr = value.postCode.split('_')
 
-      
       value.address.addr = value.addr
       value.address.postCode = splAddr[3];
       value.address.sub_district = splAddr[0];
       value.address.district = splAddr[1];
       value.address.province = splAddr[2];
     }
-   
-
 
     //--
 
-    return signUp(value).then(res => {
+    return signUp(value)
+      .then(res => this.props.addNewUser(Object.assign(value, {authId:res.uid})) )
+      .then(res => this.props.loadUserInf(res.authId))
+      .then(res => {
 
-        this.props.addNewUser(Object.assign(value, {authId:res.uid}))
-        .then(resUser => {
+        this.setState({success: true,loading: false,showMainForm:false})
+        this.props.onSetClickBack(false)
+        setTimeout(() => this.props.onCloseDialog(), 2000)
 
-          this.setState({success: true,loading: false,showMainForm:false})
-          this.props.onSetClickBack(false)
-
-          //load user data
-          //console.log('addUser succ',res.uid)
-          this.props.loadUserInf(res.uid);
-          //--
-
-          setTimeout(()=>{
-
-            //console.log('call onCloseDialog')
-            this.props.onCloseDialog();
-          }, 2000)
-
-        })
-        .catch(errUser =>{
-
-          console.log(errUser);
-          this.setState({success: false,loading: false ,showMainForm:true})
-          this.props.onSetClickBack(false)
-
-        })
-        
-
-      }).catch(error =>{
-        
-        console.log('signup error',error);
-        // throw new SubmissionError({
-        //   userName: 'User does not exist',
-        //   _error: 'Login failed!'
-        // })
+      })
+      .catch(error => {
+          
         let errorMsg = {}
         switch(error.code){
           case 'auth/email-already-in-use':
@@ -168,9 +138,7 @@ class SignupFullForm extends Component {
 
         throw new SubmissionError(errorMsg)
 
-        
-
-      });
+      })
 
   }
 

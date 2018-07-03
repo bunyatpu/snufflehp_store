@@ -8,6 +8,10 @@ const init = {
   signUp:{
     isOpen:false,
     showAddr:false
+  },
+  changeEmail:{
+    isOpen:false,
+    showAddr:false
   }
 }
 
@@ -38,7 +42,13 @@ const Dialog =  (state = init, action) => {
           showAddr:action.payload
         }
       });
+    case actionType.CHANGEEMAIL_DIALOG_SET_TOGGLE:
 
+      return Object.assign({},init,{
+        changeEmail:{
+          isOpen:action.payload
+        }
+      });
 
     default:
       return state

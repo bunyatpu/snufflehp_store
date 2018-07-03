@@ -8,14 +8,18 @@ import {
   Message,
   Button,
   Icon,
-  Transition
+  Transition,
+  Label
 } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { Field, reduxForm, change } from "redux-form";
+import { Field, reduxForm, change,SubmissionError } from "redux-form";
 import { RenderTextField } from "../../common/form/RenderFields";
 import { updateUser } from "../../../actions/User";
 import MuiDialog from "../../../components/common/dialog/MuiDialog";
 import AddrForm from "../../../components/common/form/AddrForm";
+import ChangeEmailForm from "../../../components/common/form/ChangeEmailForm";
+import { signIn, updatePassword } from '../../../firebase/auth';
+import { setChangeEmailOpen } from '../../../actions/DialogAct';
 
 const validate = values => {
   //console.log('validate',values);
@@ -24,6 +28,21 @@ const validate = values => {
   if (!values.userName) {
     errors.userName = "ชื่อผู้ใช้ไม่ถูกต้อง";
   }
+
+  if (!values.old_password) {
+    errors.old_password = "กรุณากรอกรหัสผ่านเดิม";
+  }
+
+  if (!values.new_password) {
+    errors.new_password = "กรุณากรอกรหัสผ่านใหม่";
+  }
+
+  if (!values.re_password) {
+    errors.re_password = "ยืนยันรหัสผ่าน";
+  }else if(values.new_password !== values.re_password){
+    errors.re_password = "รหัสผ่านไม่ตรง"
+  }
+
 
   return errors;
 };
@@ -64,15 +83,17 @@ class User extends Component {
     //console.log('onSaveUser', value)
     const { updateUser, userInf } = this.props;
     //console.log('onSaveUser', userInf)
-
     this.setState({
       saving: true
     });
 
     value.authId = userInf.authId;
     updateUser(userInf.id, value).then(res => {
+      //console.log('succ onSaveUser',res)
       this.showMessageSecc();
-    });
+    }).catch((err)=>{
+      console.log('error onSaveUser',err)
+    })
   };
 
   showEditAddress = () => {
@@ -95,11 +116,58 @@ class User extends Component {
     });
   };
 
+  onChangePassword = () =>{
+    const { userForm,userInf } = this.props;
+    //console.log('onChangePassword', userForm.values,userInf)
+    this.setState({ saving: true});
+
+    return signIn({
+      email:userInf.email,
+      password:userForm.values.old_password
+    }).then(res => {
+
+      //console.log('res check signIn',res);
+      
+      return updatePassword(userForm.values.new_password)
+      .then((res)=>{
+        //console.log(res)
+        this.showMessageSecc();
+      })
+      .catch((error)=>{
+        console.log('catch update password',error);
+        this.setState({ saving: false});
+        throw new SubmissionError({ new_password: 'ไม่สามารถเปลี่ยน password ได้ '+error, _error: error})
+      })
+
+    }).catch(error =>{
+      
+      //let msg = error.message
+      console.log('catch signIn ',error,error.errors)
+      this.setState({ saving: false});
+
+      if(error.errors !== undefined){
+        
+        throw new SubmissionError({ new_password: error.errors.new_password, _error: error.errors.error})
+      }else{
+        throw new SubmissionError({ old_password: 'รหัสผ่านเดิมไม่ถูกต้อง', _error: error})
+      }
+    });
+  }
+
+  onCloseChangeEmailDialog = () => {
+    console.log('onCloseChangeEmailDialog');
+    this.props.setChangeEmailOpen(false);
+  }
+
+  onShowChangeEmailDialog = () =>{
+    this.props.setChangeEmailOpen(true);
+  }
+
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
     const { activeItem, showSuccLabel, saving, addrForm } = this.state;
-    const { userInf, handleSubmit } = this.props;
+    const { userInf, handleSubmit,Dialog } = this.props;
     const addrInf = userInf.address;
     //console.log('userInf',userInf);
     const styleItem = { textAlign: "right", paddingRight: "30px" };
@@ -114,6 +182,19 @@ class User extends Component {
               </Grid.Column>
               <Grid.Column width="8" textAlign="left">
                 {userInf.email}
+                <Transition visible={!userInf.authInfo.emailVerified} animation='scale' duration={500}>
+                  <Label basic color='red' pointing='left'>
+                    not verify
+                  </Label>
+                </Transition>
+                <Transition visible={userInf.authInfo.emailVerified} animation='scale' duration={500}>
+                  <Label basic color='green' pointing='left'>
+                    verified
+                  </Label>
+                </Transition>
+                <Label as="a" onClick={this.onShowChangeEmailDialog}>
+                  <Icon name='edit' /> เปลี่ยน email
+                </Label>
               </Grid.Column>
             </Grid.Row>
             <Grid.Row width="2" verticalAlign="middle">
@@ -225,7 +306,7 @@ class User extends Component {
             <Grid.Row width="2" verticalAlign="middle">
               <Grid.Column width="5" textAlign="right" />
               <Grid.Column width="8" textAlign="left">
-                <Button loading={saving} color="teal">
+                <Button onClick={handleSubmit(this.onChangePassword)} loading={saving} color="teal">
                   เปลี่ยน
                 </Button>
               </Grid.Column>
@@ -237,7 +318,8 @@ class User extends Component {
         break;
     }
 
-    return <div>
+    return (
+      <div>
         <Grid container style={{ marginTop: "20px" }}>
           <Grid.Row>
             <Grid.Column width="4" style={{ paddingRight: "3px" }}>
@@ -269,17 +351,23 @@ class User extends Component {
         <MuiDialog isOpen={addrForm.isOpen} onCloseDialog={this.onCloseDialog} clickBack={true} size="sm">
           <AddrForm inital={addrInf} onShowMessageSecc={this.showMessageSecc} onCloseDialog={this.onCloseDialog} userInf={userInf} headTitle="แก้ไขที่อยู่" />
         </MuiDialog>
-      </div>;
+        <MuiDialog isOpen={Dialog.changeEmail.isOpen} onCloseDialog={this.onCloseChangeEmailDialog} clickBack={true} size="sm">
+          <ChangeEmailForm  onCloseDialog={this.onCloseChangeEmailDialog} />
+        </MuiDialog>
+      </div>
+    );
   }
 }
 
 const mapStateToProps = state => {
   return {
-    userInf: state.User
+    userInf:state.User,
+    userForm:state.form.userInfo,
+    Dialog:state.Dialog
   };
 };
 
 export default connect(
   mapStateToProps,
-  { change, updateUser }
+  { change, updateUser,setChangeEmailOpen }
 )(reduxForm({ form: "userInfo", validate })(User));

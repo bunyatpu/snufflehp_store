@@ -12,6 +12,16 @@ export const setSignInOpen = (set) => {
   }
 }
 
+export const setChangeEmailOpen = (set) =>{
+  return (dispatch) => {
+
+    dispatch({
+      type: actionType.CHANGEEMAIL_DIALOG_SET_TOGGLE,
+      payload: set
+    })
+  }
+}
+
 export const setSignUpOpen = (set) => {
   return (dispatch) => {
     const typeSet = typeof set;
