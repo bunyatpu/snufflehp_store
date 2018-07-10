@@ -13,14 +13,23 @@ import cookie from 'react-cookies'
 
 //import { sessionService } from 'redux-react-session';
 
+export const loadUserListener = (authId) => {
+
+  return (dispatch) => {
+    console.log('loadUserListener')
+    database.fbLoadUserListener(authId,dispatch)
+  }
+}
+
 export const loadUserInf =  (authId,callback) => {
-  //console.log('User->loadUserInf',uid)
+  console.log('User->loadUserInf authId',authId)
   return (dispatch) =>{
     return Promise.resolve().then(()=>{
       return new Promise((resolve,reject)=>{
        
         database.loadUser(authId).then( (snap) => {
-  
+          
+          console.log('after loadUser user',snap.val())
           let userInf =  {}
           //console.log('snap.val()',snap.val())
           if(snap.val() !== null){
@@ -51,62 +60,14 @@ export const loadUserInf =  (authId,callback) => {
             callback(userInf);
           }
           
-          //set localstorage
-          //console.log('currentUser',userInf);
-
           cookie.save('__session', {userInf}, { path: '/' })
-
 
           resolve(userInf)
         }).catch((error)=>{
-
-          //console.log('error currentUser',error);
           reject(error)
         })
       })
     })
-  }
-
-}
-
-
-export const _loadUserInf = (uid,callback) => {
-  return (dispatch) => {
-
-    return new Promise((resolve,reject)=>{
-
-      database.loadUser(uid).then( (snap) => {
-
-        let userInf =  {}
-        //console.log('snap.val()',snap.val())
-        if(snap.val() !== null){
-          userInf = Object.values(snap.val())[0];
-          userInf.id = Object.keys(snap.val())[0];
-        }
-        
-        //console.log('userInf',userInf);
-        dispatch({
-          type: actionType.LOAD_USER_INFO,
-          payload: userInf
-        })
-        
-        if(callback){
-          callback(userInf);
-        }
-        
-        //set localstorage
-        cookie.save('__session', {userInf}, { path: '/' })
-
-        resolve(snap.val())
-
-      }).catch(error => {
-        console.log('__session',error)
-        reject(error)
-      })
-
-    })
-    
-
   }
 
 }
@@ -144,89 +105,12 @@ export const updateUser = (uid,data) => {
           reject(err)
         })
       })
-    }).then((res)=>{
-      return loadUserInf(data.authId)(dispatch)
     })
+    // .then((res)=>{
+    //   return loadUserInf(data.authId)(dispatch)
+    // })
 
     
-  }
-}
-
-export const __updateUser = (uid,data) => {
-  return (dispatch) =>{
-    //return database.updateUser(uid,data)
-    //console.log('uid',uid)
-    return new Promise((resolve,reject) => {
-      database.updateUser(uid,data)
-      .then((resUp)=>{
-
-        return resUp
-      
-      })
-      .then((resUp)=>{
-        return database.loadUser(data.authId)
-       
-      })
-      .then( (snap) => {
-
-        let userInf =  {}
-        if(snap.val() !== null){
-          userInf = Object.values(snap.val())[0];
-          userInf.id = Object.keys(snap.val())[0];
-        }
-
-        dispatch({
-          type: actionType.LOAD_USER_INFO,
-          payload: userInf
-        })
-        
-        //set localstorage
-        cookie.save('__session', {userInf}, { path: '/' })
-        
-        resolve(uid)
-
-      })
-      .catch((err)=>{
-        reject(err)
-      })
-    })
-  }
-}
-
-export const ___updateUser = (uid,data) => {
-  return (dispatch) =>{
-    //return database.updateUser(uid,data)
-    //console.log('uid',uid)
-    return new Promise((resolve,reject) => {
-      database.updateUser(uid,data).then((resUp)=>{
-
-        database.loadUser(data.authId).then( (snap) => {
-
-          let userInf =  {}
-          if(snap.val() !== null){
-            userInf = Object.values(snap.val())[0];
-            userInf.id = Object.keys(snap.val())[0];
-          }
-
-          dispatch({
-            type: actionType.LOAD_USER_INFO,
-            payload: userInf
-          })
-          
-          //set localstorage
-          cookie.save('__session', {userInf}, { path: '/' })
-          
-          resolve(uid)
-
-        })
-        .catch(error => {
-          reject(error)
-        })
-      
-      }).catch((err)=>{
-        reject(err)
-      })
-    })
   }
 }
 

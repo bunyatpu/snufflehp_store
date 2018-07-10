@@ -14,7 +14,7 @@ import {
 import { connect } from "react-redux";
 import { Field, reduxForm, change,SubmissionError } from "redux-form";
 import { RenderTextField } from "../../common/form/RenderFields";
-import { updateUser } from "../../../actions/User";
+import { updateUser,loadUserInf } from "../../../actions/User";
 import MuiDialog from "../../../components/common/dialog/MuiDialog";
 import AddrForm from "../../../components/common/form/AddrForm";
 import ChangeEmailForm from "../../../components/common/form/ChangeEmailForm";
@@ -56,14 +56,28 @@ class User extends Component {
       saving: false,
       addrForm: {
         isOpen: false
-      }
+      },
+      loading:false
     };
   }
 
   componentDidMount() {
     const { change, userInf } = this.props;
+
     change("userName", userInf.userName);
     change("tel", userInf.tel);
+    // this.setState({loading:true})
+
+    // loadUserInf(userInf.authId).then((res)=>{
+    //   change("userName", userInf.userName);
+    //   change("tel", userInf.tel);
+
+    //   this.setState({loading:false})
+    // }).catch((error)=>{
+    //   console.log(error)
+    //   this.setState({loading:false})
+    // })
+   
   }
 
   showMessageSecc = () => {
@@ -77,23 +91,6 @@ class User extends Component {
         showSuccLabel: false
       });
     }, 2000);
-  };
-
-  onSaveUser = value => {
-    //console.log('onSaveUser', value)
-    const { updateUser, userInf } = this.props;
-    //console.log('onSaveUser', userInf)
-    this.setState({
-      saving: true
-    });
-
-    value.authId = userInf.authId;
-    updateUser(userInf.id, value).then(res => {
-      //console.log('succ onSaveUser',res)
-      this.showMessageSecc();
-    }).catch((err)=>{
-      console.log('error onSaveUser',err)
-    })
   };
 
   showEditAddress = () => {
@@ -165,12 +162,36 @@ class User extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+  //save
+  onSaveUser = value => {
+    //console.log('onSaveUser', value)
+    const { updateUser, userInf } = this.props;
+    //console.log('onSaveUser', userInf)
+    this.setState({
+      saving: true
+    });
+
+    value.authId = userInf.authId;
+    updateUser(userInf.id, value).then(res => {
+      //console.log('succ onSaveUser',res)
+      this.showMessageSecc();
+    }).catch((err)=>{
+      console.log('error onSaveUser',err)
+    })
+  }
+
+  //--
+
+
+
   render() {
-    const { activeItem, showSuccLabel, saving, addrForm } = this.state;
+    const { activeItem, showSuccLabel, saving, addrForm ,loading} = this.state;
     const { userInf, handleSubmit,Dialog } = this.props;
     const addrInf = userInf.address;
     //console.log('userInf',userInf);
     const styleItem = { textAlign: "right", paddingRight: "30px" };
+
+    let verified = (userInf.emailVerified !== undefined && userInf.emailVerified === true) ? true:false;
 
     let content = "รอสักครู่..";
     switch (activeItem) {
@@ -181,13 +202,13 @@ class User extends Component {
                 Email
               </Grid.Column>
               <Grid.Column width="8" textAlign="left">
-                {userInf.email}
-                <Transition visible={!userInf.authInfo.emailVerified} animation='scale' duration={500}>
+                {userInf.authInfo.email}
+                <Transition visible={!verified} animation='scale' duration={500}>
                   <Label basic color='red' pointing='left'>
                     not verify
                   </Label>
                 </Transition>
-                <Transition visible={userInf.authInfo.emailVerified} animation='scale' duration={500}>
+                <Transition visible={verified} animation='scale' duration={500}>
                   <Label basic color='green' pointing='left'>
                     verified
                   </Label>
@@ -202,7 +223,7 @@ class User extends Component {
                 User name
               </Grid.Column>
               <Grid.Column width="8" textAlign="left">
-                <Field fluid name="userName" component={RenderTextField} label={false} placeholder="userName" />
+                <Field loading={loading} disabled={loading} fluid name="userName" component={RenderTextField} label={false} placeholder={(loading)?"loading...":"กรอก userName"} />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row width="2" verticalAlign="middle">
@@ -210,7 +231,7 @@ class User extends Component {
                 เบอร์โทร
               </Grid.Column>
               <Grid.Column width="8" textAlign="left">
-                <Field fluid name="tel" type="number" component={RenderTextField} label={false} placeholder="เบอร์โทร" />
+                <Field  loading={loading} disabled={loading}  fluid name="tel" type="number" component={RenderTextField} label={false} placeholder={(loading)?"loading...":"กรอก เบอร์โทร"} />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row width="2" verticalAlign="middle">
@@ -369,5 +390,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { change, updateUser,setChangeEmailOpen }
+  { change, updateUser,setChangeEmailOpen,loadUserInf }
 )(reduxForm({ form: "userInfo", validate })(User));

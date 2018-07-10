@@ -24,6 +24,8 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const fireConfig = require('./firebase_key');
 const template = require('./html-template');
+const admin = require('firebase-admin');
+global.admin = admin;
 // const cookiesMiddleware = require('universal-cookie-express');
 // React App
 const ServerApp = React.createFactory(require('./build/server.bundle.js').default);
@@ -31,7 +33,9 @@ const ServerApp = React.createFactory(require('./build/server.bundle.js').defaul
 const database = require('./firebase-db');
 
 const keys = fireConfig.fkey;
-database.initializeApp(keys);
+//database.initializeApp(keys);
+var defaultApp = admin.initializeApp(functions.config().firebase);
+console.log('defaultApp==>',defaultApp.name);
 //local
 app.use(express.static('../public'));
 app.use(cors);
@@ -46,9 +50,16 @@ app.use(cookieParser);
 //   res.send(204);
 // });
 
+// global.firebase = firebase;
+
+// global.testNameb = '4444';
+
 app.get('*', (req, res) => {
 
-  console.log('server show cookies',req.cookies);
+  //console.log('server show cookies',req.cookies);
+  //console.log('global',global.firebase)
+
+  console.log('route ssr start')
 
   database.getNewEntry().then(function(products){
 
@@ -63,6 +74,7 @@ app.get('*', (req, res) => {
     const html = ReactDOMServer.renderToString(
       ServerApp({init: init,req:req, context: {},fireConf:keys,cookies:objCookies})
     );
+    
   
     res.send(template(html,{init:init}))
 

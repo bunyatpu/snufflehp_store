@@ -1,6 +1,5 @@
-const firebase = global.firebase || require('firebase');
-
-
+//const firebase = require('firebase');
+const firebase = global.admin || require('firebase');
 
 const initializeApp = (keys) => {
   if (firebase.apps.length === 0) {

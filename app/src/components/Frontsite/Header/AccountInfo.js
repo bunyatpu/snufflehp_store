@@ -94,7 +94,7 @@ class AccountInfo extends Component {
           style={{padding:"0px"}}
           content={
             <Menu vertical>
-              <Menu.Item name='myAccount' onClick={()=> this.props.historya.push('/user')}  >
+              <Menu.Item name='myAccount' onClick={()=> this.props.historya.replace('/user')}  >
                 <span>บัญชีของฉัน</span>
               </Menu.Item>
 

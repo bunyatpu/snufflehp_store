@@ -10,6 +10,11 @@ import './App.css';
 //import 'librarys/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css';
 import 'semantic-ui-css/semantic.min.css';
 
+//import { verifieEmail } from './firebase/auth'
+import {loadUserInf,loadUserListener} from './actions/User'
+//import VerifyMail from "./components/common/auth/VerifyMail";
+//import { connectUser } from './firebase/user'
+
 
 class App extends Component {
 
@@ -32,26 +37,42 @@ class App extends Component {
   // }
 
   componentWillMount(){
+
+    //regisUser();
+
     let { cookieServer } = this.props;
 
-    // console.log('first cookieServer',cookieServer)
-
-    // if(cookies && cookies.get('__session') !== undefined){
-    //   let session = cookies.get('__session')
-    //   this.props.setUserInf(session.userInf);
-    // }else 
+    let userInf = {}
     if(cookieServer && cookieServer.userInf !== undefined){
-
-      this.props.setUserInf(cookieServer.userInf);
+      userInf = cookieServer.userInf
+      //this.props.setUserInf(cookieServer.userInf);
     }else{
 
       
       const session = cookie.load('__session')
-      const userInf = (session !== undefined) ? session.userInf:{}
+      userInf = (session !== undefined) ? session.userInf:{}
       //console.log('session',session);
-      this.props.setUserInf(userInf);
-
+      //this.props.setUserInf(userInf);
     }
+
+
+   // console.log('init load userInf==>',userInf);
+    this.props.setUserInf(userInf);
+
+    if(userInf.authId !== undefined){
+      console.log('load user info')
+      // this.props.loadUserInf(userInf.authId).then((res)=>{
+      //   //console.log('load user complete')
+      // }).catch((error)=>{
+      //   //console.log(error)
+      // })
+
+      this.props.loadUserListener(userInf.authId)
+
+      //connectUser(userInf.authId)
+    }
+
+
   }
 
   render() {
@@ -72,7 +93,13 @@ class App extends Component {
 
 }
 
-export default withRouter(connect(()=>({}), {setUserInf})(App));
+const mapStateToProps = (state) => {
+  return {
+    historya:state.RouteInfo.history
+  }
+}
+
+export default withRouter(connect(mapStateToProps, {setUserInf,loadUserInf,loadUserListener})(App));
 
 
 
