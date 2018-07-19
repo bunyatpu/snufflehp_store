@@ -16,20 +16,20 @@ import cookie from 'react-cookies'
 export const loadUserListener = (authId) => {
 
   return (dispatch) => {
-    console.log('loadUserListener')
+    //console.log('loadUserListener')
     database.fbLoadUserListener(authId,dispatch)
   }
 }
 
 export const loadUserInf =  (authId,callback) => {
-  console.log('User->loadUserInf authId',authId)
+  //console.log('User->loadUserInf authId',authId)
   return (dispatch) =>{
     return Promise.resolve().then(()=>{
       return new Promise((resolve,reject)=>{
        
         database.loadUser(authId).then( (snap) => {
           
-          console.log('after loadUser user',snap.val())
+          //console.log('after loadUser user',snap.val())
           let userInf =  {}
           //console.log('snap.val()',snap.val())
           if(snap.val() !== null){

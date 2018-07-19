@@ -2,8 +2,11 @@ import React,{Component} from 'react'
 import { connect } from 'react-redux'
 import { getProductByName } from '../../../actions/product';
 import {setSignInOpen} from '../../../actions/DialogAct';
+import {addCart} from '../../../actions/CartAct';
 import AddrForm from '../../../components/common/form/AddrForm'
 import MuiDialog from '../../../components/common/dialog/MuiDialog'
+import StatusDialog from '../../../components/common/dialog/StatusDialog'
+
 import { 
   Header, 
   Divider, 
@@ -13,9 +16,9 @@ import {
   Label,
   Button,
   Image,
-  Breadcrumb
+  Breadcrumb,
+  Icon
 } from 'semantic-ui-react'
-import { Icon } from 'semantic-ui-react'
 
 
 
@@ -27,7 +30,10 @@ class Product extends Component {
       qty:1,
       addrForm:{
         isOpen:false
-      }
+      },
+      isOpenStatus:false,
+      bt1Load:false,
+      bt2Load:false
     }
   }
 
@@ -90,6 +96,76 @@ class Product extends Component {
     })
   }
 
+  onAddtoCart = () => {
+    //console.log('onAddtoCart',this.props.userInf);
+    const { userInf,pModel,Carts } = this.props
+
+    const sumQty = Carts.reduce((acc,item)=>{
+      return parseInt(acc,0) + parseInt(item.qty,0)
+    },0)
+
+    const  model = {
+      uid:userInf.id,
+      carts:{
+        //userId:this.props.userInf.id,
+        prodId:pModel.prodId,
+        qty:parseInt(this.state.qty,0)+sumQty
+      }
+    }
+
+    this.setState({bt1Load:true})
+
+    this.props.addCart(model).then((secc)=>{
+      
+      this.onShowStatus()
+      this.setState({bt1Load:false})
+
+    }).catch((error)=>{
+      console.log('error->',error);
+    })
+
+  }
+
+  gotoCart = () => {
+
+    const { userInf,pModel,Carts } = this.props
+
+    const sumQty = Carts.reduce((acc,item)=>{
+      return parseInt(acc,0) + parseInt(item.qty,0)
+    },0)
+
+    const  model = {
+      uid:userInf.id,
+      carts:{
+        //userId:this.props.userInf.id,
+        prodId:pModel.prodId,
+        qty:parseInt(this.state.qty,0)+sumQty
+      }
+    }
+
+    this.setState({bt2Load:true})
+
+    this.props.addCart(model).then((secc)=>{
+      
+      //this.onShowStatus()
+      this.setState({bt2Load:false})
+      this.props.historya.push('/cart')
+
+    }).catch((error)=>{
+      console.log('error->',error);
+    })
+
+  }
+
+  onShowStatus = () =>{
+    this.setState({isOpenStatus:true})
+
+    setTimeout(() => {
+      this.setState({isOpenStatus:false})  
+    }, 1000);
+  }
+
+
   onCloseDialog = () => {
     //console.log('onCloseDialog')
     //this.props.setSignUpOpen(false)
@@ -105,86 +181,91 @@ class Product extends Component {
     let { qty,addrForm } = this.state;
     let { pModel ,userInf} = this.props;
 
+    //console.log('cart now=>',Carts);
+
     //console.log(pModel);
     let submitTypeTxt = "สั่งจองสินค้า"
 
     return (
-      <Grid container padded="vertically"  >
-        <Grid.Row>
-          <Grid.Column textAlign="left"  width={16}>
-            <Breadcrumb>
-              <Breadcrumb.Section link>หน้าหลัก</Breadcrumb.Section>
-              <Breadcrumb.Divider icon='right angle' />
-              <Breadcrumb.Section link>สินค้าทั้งหมด</Breadcrumb.Section>
-              <Breadcrumb.Divider icon='right angle' />
-              <Breadcrumb.Section active style={{color:'#757575'}}>{pModel.name}</Breadcrumb.Section>
-            </Breadcrumb>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row columns={2} style={{paddingTop:"0px"}}>
-          <Grid.Column  width={6} style={{paddingRight:"4px"}}>
-            <Segment style={{height:"500px"}} >
-              <div>
-                <Image 
-                  src={pModel.imgDownloadPath}
-                  fluid />
-              </div>
-            </Segment>
-          </Grid.Column>
-          <Grid.Column  width={10} style={{paddingLeft:"4px"}} >
-            <Segment textAlign="left">
-              <h2 style={{fontSize:'2rem',fontWeight:"500"}}>{pModel.name}</h2>
-              <Header.Subheader>
-              {pModel.desc}
-              </Header.Subheader>
-              <Divider />
-              <div>
-                <h2 style={{fontSize:'30px',color:"#f57224"}}>
-                  ฿{pModel.price}
-                </h2>
+      <div>
+        <StatusDialog isOpen={this.state.isOpenStatus} />
+        <Grid container padded="vertically"  >
+          <Grid.Row>
+            <Grid.Column textAlign="left"  width={16}>
+              <Breadcrumb>
+                <Breadcrumb.Section link>หน้าหลัก</Breadcrumb.Section>
+                <Breadcrumb.Divider icon='right angle' />
+                <Breadcrumb.Section link>สินค้าทั้งหมด</Breadcrumb.Section>
+                <Breadcrumb.Divider icon='right angle' />
+                <Breadcrumb.Section active style={{color:'#757575'}}>{pModel.name}</Breadcrumb.Section>
+              </Breadcrumb>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2} style={{paddingTop:"0px"}}>
+            <Grid.Column  width={6} style={{paddingRight:"4px"}}>
+              <Segment style={{height:"500px"}} >
+                <div>
+                  <Image 
+                    src={pModel.imgDownloadPath}
+                    fluid />
+                </div>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column  width={10} style={{paddingLeft:"4px"}} >
+              <Segment textAlign="left">
+                <h2 style={{fontSize:'2rem',fontWeight:"500"}}>{pModel.name}</h2>
                 <Header.Subheader>
-                  {pModel.desc_price}
+                {pModel.desc}
                 </Header.Subheader>
-              </div>
-              <Divider />
-              <Grid>
-                <Grid.Row verticalAlign="middle"  >
-                  <Grid.Column width={2}>
-                    จำนวน:
-                  </Grid.Column>  
-                  <Grid.Column width={2}>
-                    <Input labelPosition='right' type='text' placeholder='Amount'>
-                      <Label onClick={this.onDownQty} default as="a">
-                        <Icon style={{margin:"0px"}} name='minus' />
-                      </Label>
-                      <input onChange={this.onChangeQty}  value={qty} style={{width:'60px',textAlign:"center"}} />
-                      <Label  onClick={this.onUpQty} default as="a">
-                        <Icon style={{margin:"0px"}} name='plus' />
-                      </Label>
-                    </Input>
-                  </Grid.Column> 
-                </Grid.Row > 
-              </Grid>
-              <Divider />
-              <Button size="large" color='teal'>เพิ่มไปยังรถเข็น</Button>
-              <Button size="large" color='orange' onClick={this.onBuy} style={{marginLeft:'5px'}}>{submitTypeTxt}</Button>
+                <Divider />
+                <div>
+                  <h2 style={{fontSize:'30px',color:"#f57224"}}>
+                    ฿{pModel.price}
+                  </h2>
+                  <Header.Subheader>
+                    {pModel.desc_price}
+                  </Header.Subheader>
+                </div>
+                <Divider />
+                <Grid>
+                  <Grid.Row verticalAlign="middle"  >
+                    <Grid.Column width={2}>
+                      จำนวน:
+                    </Grid.Column>  
+                    <Grid.Column width={2}>
+                      <Input labelPosition='right' type='text' placeholder='Amount'>
+                        <Label onClick={this.onDownQty} default as="a">
+                          <Icon style={{margin:"0px"}} name='minus' />
+                        </Label>
+                        <input onChange={this.onChangeQty}  value={qty} style={{width:'60px',textAlign:"center"}} />
+                        <Label  onClick={this.onUpQty} default as="a">
+                          <Icon style={{margin:"0px"}} name='plus' />
+                        </Label>
+                      </Input>
+                    </Grid.Column> 
+                  </Grid.Row > 
+                </Grid>
+                <Divider />
+                <Button size="large" loading={this.state.bt1Load} disabled={this.state.bt1Load} color='teal' onClick={this.onAddtoCart}>เพิ่มไปยังรถเข็น</Button>
+                <Button size="large" loading={this.state.bt2Load} disabled={this.state.bt2Load}   color='orange' onClick={this.gotoCart} style={{marginLeft:'5px'}}>{submitTypeTxt}</Button>
 
-            </Segment>
-          </Grid.Column>
-        </Grid.Row>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
 
-        <MuiDialog 
-          isOpen={addrForm.isOpen}
-          onCloseDialog={this.onCloseDialog}
-          clickBack={true}
-          size="sm"  >
-          <AddrForm 
-            onCloseDialog={this.onCloseDialog} 
-            userInf={userInf}
-          />
-        </MuiDialog>
-       
-      </Grid>
+          <MuiDialog 
+            isOpen={addrForm.isOpen}
+            onCloseDialog={this.onCloseDialog}
+            clickBack={true}
+            size="sm"  >
+            <AddrForm 
+              onCloseDialog={this.onCloseDialog} 
+              userInf={userInf}
+            />
+          </MuiDialog>
+        
+        </Grid>
+      </div>
     )
   }
 }
@@ -193,8 +274,10 @@ const mapStateToProps = (state) => {
   return {
     match: state.RouteInfo.match,
     pModel:state.ProductDetail,
-    userInf: state.User
+    Carts:state.Carts.lists,
+    userInf: state.User,
+    historya:state.RouteInfo.history
   }
 }
 
-export default connect(mapStateToProps,{getProductByName,setSignInOpen})(Product);
+export default connect(mapStateToProps,{getProductByName,setSignInOpen,addCart})(Product);

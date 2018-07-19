@@ -38,7 +38,12 @@ export const getProductByName = (name) => {
     productDb.getProductByName(name)
       .then( (products) => {
 
-        let prodVal = (products.val() === null) ? {}:Object.values(products.val())[0];
+        let prodVal = {}
+       
+        if(products.val() !== null){
+          prodVal = Object.values(products.val())[0]
+          prodVal.prodId = Object.keys(products.val())[0]
+        }
 
         dispatch({
           type: actionType.LOAD_PRODUCT_BY_NAME,

@@ -210,3 +210,7 @@ img.report-img {
   border-color: rgb(143, 143, 146) !important;
 }
 
+.Cart:hover{
+  cursor: pointer;
+}
+

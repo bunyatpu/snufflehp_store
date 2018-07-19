@@ -49,9 +49,9 @@ class AppSsr extends Component{
       <StaticRouter
           location={req.url}
           context={context}
-        >
-          <App callFrom="server" cookieServer={cookies} />
-        </StaticRouter>
+      >
+        <App callFrom="server" cookieServer={cookies} />
+      </StaticRouter>
     </Provider>  
   )
 }
@@ -59,19 +59,3 @@ class AppSsr extends Component{
 
 export default AppSsr;
 
-
-// render(){
-
-//   let {req,context,cookies} = this.props;
-
-//   return (
-//     <Provider store={this.state.store}>
-//       <StaticRouter
-//           location={req.url}
-//           context={context}
-//         >
-//           <App callFrom="server" cookieServer={cookies} />
-//         </StaticRouter>
-//     </Provider>  
-//   )
-// }

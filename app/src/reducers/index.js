@@ -7,6 +7,7 @@ import User from './User'
 import RouteInfo from './RouteInfo'
 import ProductDetail from './ProductDetail'
 import Dialog from './Dialog'
+import Carts from "./Carts";
 import { reducer as formReducer } from 'redux-form'
 
 const reducer = combineReducers({
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   RouteInfo,
   ProductDetail,
   Dialog,
+  Carts,
   form: formReducer,
   session: sessionReducer
 })

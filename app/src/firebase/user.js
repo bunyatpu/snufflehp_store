@@ -68,14 +68,14 @@ const loadUser = (authId) =>{
 }
 
 const fbLoadUserListener =  (authId,dispatch) => {
-  console.log('fbLoadUserListener',authId,firebase)
+  //console.log('fbLoadUserListener',authId,firebase)
 
 
   var dbUser = firebase.database().ref('users');
   dbUser.orderByChild("authId")
   .equalTo(authId)
   .on('value',function(snap){
-    console.log('===>user change<===');
+    //console.log('===>user change<===');
     // console.log('==>',snap.val());
     //console.log('dispatch',dispatch);
 
@@ -103,7 +103,7 @@ const fbLoadUserListener =  (authId,dispatch) => {
       resolve(authInfo)
     })
     .then((authInfo)=>{
-      console.log('1 .set auth info',authInfo)    
+      //console.log('1 .set auth info',authInfo)    
       userInf.authInfo = authInfo
       return userInf
 
@@ -111,7 +111,7 @@ const fbLoadUserListener =  (authId,dispatch) => {
     .then((userInf)=>{
 
       //check  emailVerified
-      console.log('2. check  emailVerified',userInf.emailVerified,userInf.authInfo.emailVerified)  
+      //console.log('2. check  emailVerified',userInf.emailVerified,userInf.authInfo.emailVerified)  
       
       if(userInf.emailVerified !== userInf.authInfo.emailVerified){
 
@@ -147,11 +147,28 @@ const fbLoadUserListener =  (authId,dispatch) => {
     })
     .then((userInf)=>{
 
-      console.log('3. dispatch user info to reducer and save cookie')    
+      //console.log('3. dispatch user info to reducer and save cookie',userInf)    
       dispatch({
         type: actionType.LOAD_USER_INFO,
         payload: userInf
       })
+
+      
+
+      //dispath carts
+      if(userInf.carts !== undefined){
+        let cartNow = Object.values(userInf.carts)
+
+        //console.log('cartNow',cartNow);
+        dispatch({
+          type: actionType.ADDCART,
+          payload: cartNow
+        })
+      }
+      // dispatch({
+      //   type: actionType.ADDCART,
+      //   payload: newList
+      // })
       
       cookie.save('__session', {userInf}, { path: '/' })
     })
