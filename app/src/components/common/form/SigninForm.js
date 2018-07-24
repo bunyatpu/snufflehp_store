@@ -16,7 +16,7 @@ import * as icons from 'react-icons/lib/md';
 import {orange,green} from '@material-ui/core/colors';
 import {signIn} from '../../../firebase/auth';
 import { connect } from 'react-redux'
-import {loadUserInf} from '../../../actions/User';
+import {loadUserInf,loadUserListener} from '../../../actions/User';
 import {setSignUpOpen} from '../../../actions/DialogAct';
 //import {setSignInOpen} from '../../../actions/DialogAct';
 // import cookie from 'react-cookies'
@@ -126,8 +126,11 @@ class SignInForm extends React.Component {
 
         //loadUserInf
         this.props.loadUserInf(res.uid, (userInf)=>{
-
+          console.log('userInf-->',userInf)
+          this.props.loadUserListener(userInf.authId)
         })
+
+        //this.props.loadUserListener(userInf.authId)
 
 
         this.setState({success: true,loading: false,showMainForm:false})
@@ -284,4 +287,4 @@ SignInForm.propTypes = {
 
 
 //export default withCookies(withStyles(styles)( connect(()=>({}), {loadUserInf})(SignInForm)));
-export default withStyles(styles)( connect(()=>({}), {loadUserInf,setSignUpOpen})(SignInForm));
+export default withStyles(styles)( connect(()=>({}), {loadUserInf,setSignUpOpen,loadUserListener})(SignInForm));

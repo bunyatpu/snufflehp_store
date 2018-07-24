@@ -26,38 +26,81 @@ class CartsList extends Component {
     getById(item.prodId).then((products)=>{
       //console.log('--->',products.val())
       let prodVal = {}
-       
+      
       if(products.val() !== null){
         prodVal = products.val()
         prodVal.prodId = item.prodId
+        prodVal.qty = item.qty 
+        prodVal.checked = item.checked
       }
 
+      
+
       this.setState({loading:false,prodInf:prodVal})
+
+      this.props.calTotalPrice(prodVal)
 
     }).catch((error)=>{
       console.log(error)
     })
   }
 
+  // componentDidUpdate(){
+  //   const { prodInf } = this.state
+  //   this.props.calTotalPrice(prodInf)
+  // }
+
   handleChangeQty = (prodId,qty) =>{
     //console.log('handleChangeQty',prodId,qty)
     this.props.onHandleChangeQty(prodId,qty)
+
+
+   
+    let newState = Object.assign({},this.state.prodInf)
+    newState.qty = qty
+
+    //console.log('handleChangeQty newState=>',newState)
+    this.props.calTotalPrice(newState)
+   
   }
 
+  handleChecked =(e,data)=>{
+    //console.log('handleChecked e=>',e,data)
+    //console.log('handleChecked',data)
+    this.props.onHandleToggleChecked(data)
+
+    let newState = Object.assign({},this.state.prodInf)
+    newState.checked = data.checked;
+    this.props.calTotalPrice(newState)
+   
+  }
+
+  // calTotalPrice = () =>{
+
+
+
+   
+  // }
+
+
+
   render(){
-    const {item} = this.props
-    const { loading,prodInf } = this.state
+
+    const { item } = this.props
+    const { loading, prodInf } = this.state
+
+    //console.log(prodInf)
     const secSty = {padding:'10px',margin:'5px',border:'1px solid rgba(139, 139, 140, 0.15)'}
     return (
       <Segment style={secSty}> 
         <Grid>
           <Grid.Row>
             <Grid.Column width={1} textAlign="left" >
-              <Checkbox />
+              <Checkbox prod_id={item.prodId} checked={item.checked} onClick={this.handleChecked} />
             </Grid.Column>
             <Grid.Column width={9}   >
               <Image 
-                src={'https://firebasestorage.googleapis.com/v0/b/snufflehp-v3.appspot.com/o/img_products%2Fm.jpg?alt=media&token=959d9bde-488b-40b7-a19a-c56ed2c244b0'} 
+                src={prodInf.thumb_img} 
                 size='tiny' 
                 verticalAlign="top" 
                 floated="left"

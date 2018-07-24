@@ -149,6 +149,11 @@ export const logOut = (callback) => {
       payload: {}
     })
 
+    dispatch({
+      type: actionType.ADDCART,
+      payload: []
+    })
+
     if(callback){
       callback()
     }

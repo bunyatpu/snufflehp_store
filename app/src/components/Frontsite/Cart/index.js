@@ -4,23 +4,44 @@ import {
   Segment ,
   Label,
   Checkbox,
-  Icon,
   Header,
-  Tab,
   Button
 } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 //import InputQty from "../../common/form/InputQty";
-import { addCart } from '../../../actions/CartAct';
+import { addCart,manageCart } from '../../../actions/CartAct';
 import CartsList from './CartsList'
+import NumberFormat from 'react-number-format';
+import Shiping from './Shiping'
+import MuiDialog from "../../../components/common/dialog/MuiDialog";
+import AddrShipping from "../../../components/common/form/AddrShipping";
 //CartQty
+
 class Cart extends Component{
 
   constructor(props){
     super(props)
+
+    let address = (props.userInf.address !== undefined) ? props.userInf.address:{}
     this.state = {
       pLoading:true,
-      listInf:[]
+      listInf:[],
+      totalProdPrice:0.00,
+      transferPrice:0.00,
+      sumPrice:0.00,
+      address,
+      addrForm: {
+        isOpen: false
+      },
+      sumWeight:0,
+      defaultWeight:450,
+      plusPacking:{
+        book:10,
+        other:5
+      },
+      typeCommon:false,
+      sumPlusPaking:0.00
+      
     }
 
     //console.log('const',props)
@@ -42,12 +63,118 @@ class Cart extends Component{
 
     this.props.addCart(model).then((secc)=>{
       
-      console.log('onHandleChangeQty addCart-->',secc)
+      //console.log('onHandleChangeQty addCart-->',secc)
 
     }).catch((error)=>{
       console.log('error->',error);
     })
 
+  }
+
+  onHandleToggleChecked = (data) =>{
+    //console.log('onHandleToggleChecked',data)
+    const { userInf } = this.props
+
+    const  model = {
+      uid:userInf.id,
+      carts:{
+        //userId:this.props.userInf.id,
+        prodId:data.prod_id,
+        checked:data.checked
+      }
+    }
+
+
+    this.props.manageCart(model).then((secc)=>{
+      
+      //console.log('onHandleToggleChecked addCart-->',secc)
+
+    }).catch((error)=>{
+      console.log('error->',error);
+    })
+  }
+
+  calculateTotalPrice = (pInfo) => {
+    
+    //console.log('pInfo',pInfo)
+
+    let { listInf,plusPacking } = this.state
+
+    const findIndex = listInf.findIndex(i => i.prodId === pInfo.prodId)
+    //console.log('findIndex',findIndex)
+    if(findIndex < 0){
+      if(pInfo.checked){
+        listInf.push(pInfo)
+      }
+      
+    }else{
+      if(pInfo.checked){
+        listInf[findIndex] = {...listInf[findIndex],...pInfo}
+      }else{
+        //console.log('slice')
+        listInf.splice(findIndex,1)
+      }
+      
+    }
+
+    //let sumPrice = listInf.reduce( (acc, i) => acc + (i.qty * i.price),0)
+    let sumPrice = 0.00
+    let sumWeight = 0
+    let sumPlusPaking = 0.00
+
+    listInf.forEach((i)=>{
+      sumPrice += (i.price * i.qty)
+      sumWeight += (i.qty * this.state.defaultWeight)
+      
+      if( (i.qty - 1) > 0 && i.product_type !== undefined){
+        sumPlusPaking += ( (i.qty - 1) * plusPacking[i.product_type] )
+      }
+
+    })
+
+    this.setState({
+      totalProdPrice:sumPrice,
+      sumWeight,
+      sumPlusPaking
+    })
+
+    console.log('sumPrice',sumPrice,'sumWeight',sumWeight)
+
+  }
+
+  handleSelShipping = (data) => {
+    console.log('handleSelShipping',data)
+    this.setState({transferPrice:data.price})
+  }
+
+  onCloseDialog = () => {
+    //console.log('onCloseDialog')
+    //this.props.setSignUpOpen(false)
+    this.setState({
+      addrForm: {
+        isOpen: false
+      }
+    });
+  }
+
+  showMessageSecc = () => {
+
+  }
+
+  showEditAddress = () => {
+    //console.log('onCloseDialog')
+    //this.props.setSignUpOpen(false)
+    this.setState({
+      addrForm: {
+        isOpen: true
+      }
+    })
+  }
+
+  onSummitAddr = (data) =>{
+    console.log('onSummitAddr',data)
+    this.setState({address:data})
+    this.onCloseDialog()
   }
 
 
@@ -58,39 +185,40 @@ class Cart extends Component{
     const sumSty = {padding:'2px',margin:'2px'}
     const sumLine = {marginTop:'10px'}
     const { userInf,Carts } = this.props
+    const { address,addrForm,sumWeight,sumPlusPaking } = this.state
+    //const addrInf = userInf.address;
 
     //console.log('userInf',userInf);
 
-    let address = userInf.address.addr 
-          +' ตำบล'+userInf.address.sub_district
-          +' อำเภอ'+userInf.address.district
-          +' จังหวัด'+userInf.address.province
-          +' '+userInf.address.postCode
+    let addressTxt = address.addr 
+          +' ตำบล'+address.sub_district
+          +' อำเภอ'+address.district
+          +' จังหวัด'+address.province
+          +' '+address.postCode
 
-    const panes = [
-      { 
-        menuItem: 'ไปรษณีย์ไทย', 
-        render: () => <Tab.Pane>
-          <Button  basic color='green'>
-            <Icon name='check' />
-            ส่งธรรมดา
-          </Button>
-          <Button  style={{boxShadow:'none'}} basic >
-            ส่งลงทะเบียน
-          </Button>
-          <Button style={{boxShadow:'none'}}  basic >
-            ส่ง EMS
-          </Button>
-        </Tab.Pane> 
-      },
-      { menuItem: 'Kerry express', render: () => <Tab.Pane>Kerry express</Tab.Pane> }
-    ]
+  
 
     let items = Carts.map((item,i)=>{
-      return <CartsList key={i} item={item} onHandleChangeQty={this.onHandleChangeQty} />
+      return <CartsList 
+          key={i} 
+          item={item} 
+          onHandleChangeQty={this.onHandleChangeQty} 
+          onHandleToggleChecked={this.onHandleToggleChecked}
+          calTotalPrice={this.calculateTotalPrice}
+        />
     })
 
     return <div>
+      <MuiDialog isOpen={addrForm.isOpen} onCloseDialog={this.onCloseDialog} clickBack={true} size="sm">
+          <AddrShipping 
+            inital={address} 
+            onShowMessageSecc={this.showMessageSecc} 
+            onSummitAddr={this.onSummitAddr}
+            onCloseDialog={this.onCloseDialog} 
+            userInf={userInf} 
+            headTitle="แก้ไขที่อยู่" 
+          />
+      </MuiDialog>
       <Grid container padded="vertically"  >
         <Grid.Row  >
           <Grid.Column width={10} style={{paddingRight:"2px"}} >
@@ -124,17 +252,21 @@ class Cart extends Component{
                     <Header as='h5'  block color='grey'>
                       <Header.Content style={{width:'100%'}}>
                         ที่อยู่ในการจัดส่ง
-                        <Label as="a" size="tiny" color="yellow" style={{float:'right'}} >เปลี่ยนที่อยู่</Label>
+                        <Label onClick={this.showEditAddress} as="a" size="tiny" color="yellow" style={{float:'right'}} >เปลี่ยนที่อยู่</Label>
                       </Header.Content>
                     </Header>
-                    {address}
+                    { addressTxt }
 
                     <Header as='h5'  block color='grey' style={{marginTop:'40px'}} >
                       <Header.Content style={{width:'100%'}}>
                         ตัวเลือกในการจัดส่ง
                       </Header.Content>
                     </Header>
-                    <Tab panes={panes} />
+                    <Shiping 
+                      weight={sumWeight} 
+                      handleSelShipping={this.handleSelShipping} 
+                      sumPlusPaking={sumPlusPaking}
+                    />
 
                     <Header as='h5'  block color='grey' style={{marginTop:'40px'}} >
                       <Header.Content style={{width:'100%'}}>
@@ -144,17 +276,39 @@ class Cart extends Component{
                     <Grid style={{marginLeft:'10px',marginRight:'10px'}}>
                       <Grid.Row style={sumSty}>
                         <Grid.Column width={8}>ราคาสินค้ารวม</Grid.Column>
-                        <Grid.Column textAlign="right" width={6}>1,11222.00</Grid.Column>
+                        <Grid.Column textAlign="right" width={6}>
+                          <NumberFormat 
+                            thousandSeparator={true} 
+                            value={parseFloat(this.state.totalProdPrice)} 
+                            displayType='text'
+                            decimalScale={2}
+                          />
+                        </Grid.Column>
                         <Grid.Column width={2}>บาท</Grid.Column>
                       </Grid.Row>
                       <Grid.Row style={sumSty}>
                         <Grid.Column width={8}>ค่าจัดส่ง</Grid.Column>
-                        <Grid.Column textAlign="right"width={6}>120.00</Grid.Column>
+                        <Grid.Column textAlign="right"width={6}>
+                          <NumberFormat 
+                              thousandSeparator={true} 
+                              value={parseFloat(this.state.transferPrice)} 
+                              displayType='text'
+                            />
+                        </Grid.Column>
                         <Grid.Column width={2}>บาท</Grid.Column>
                       </Grid.Row>
                       <Grid.Row style={sumSty} >
                         <Grid.Column style={sumLine}  width={8}>รวม</Grid.Column>
-                        <Grid.Column style={Object.assign({},sumLine,{fontWeight:'bold',fontSize:'1.3rem',color:'orange'})} textAlign="right"width={6}>1,11222.00</Grid.Column>
+                        <Grid.Column 
+                          style={Object.assign({},sumLine,{fontWeight:'bold',fontSize:'1.3rem',color:'orange'})} 
+                          textAlign="right"width={6}>
+              
+                          <NumberFormat 
+                              thousandSeparator={true} 
+                              value={parseFloat(this.state.totalProdPrice) + parseFloat(this.state.transferPrice)} 
+                              displayType='text'
+                            />
+                        </Grid.Column>
                         <Grid.Column style={sumLine} width={2}>บาท</Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -184,4 +338,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps,{addCart})(Cart);
+export default connect(mapStateToProps,{ addCart,manageCart })(Cart);

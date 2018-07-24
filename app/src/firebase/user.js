@@ -153,7 +153,7 @@ const fbLoadUserListener =  (authId,dispatch) => {
         payload: userInf
       })
 
-      
+      //console.log('userInf-->',userInf)
 
       //dispath carts
       if(userInf.carts !== undefined){
