@@ -66,7 +66,7 @@ class Shiping extends Component{
 
   handleSelShipping = (data) =>{
 
-    this.props.handleSelShipping({selShiping:data.type})
+    this.props.handleSelShipping({price:data.price})
   }
 
   render(){
@@ -74,8 +74,8 @@ class Shiping extends Component{
     const color = {style:{}};
     const color2 = {color:'green'}
 
-    //const { active,initPrinceShip } = this.state
-    const { weight ,priceShiping,selShiping} = this.props
+    const { active,initPrinceShip } = this.state
+    const { weight,sumPlusPaking } = this.props
 
     //const selBtn = (active === 'ems') ? 'ems': 
 
@@ -84,7 +84,7 @@ class Shiping extends Component{
     btnSet['regis'] = {...color}
     btnSet['ems'] = {...color}
     btnSet['kerry'] = {...color}
-    btnSet[selShiping] = color2;
+    btnSet[active] = color2;
 
    
     //console.log(btnSet.regis.color)
@@ -97,21 +97,21 @@ class Shiping extends Component{
         render: () => <Tab.Pane>
           {
             weight > 4000 &&
-            <Button type="normal" price={priceShiping.normal} onClick={this.selectShip} basic {...btnSet['normal']}>
+            <Button type="normal" price={initPrinceShip.normal + sumPlusPaking} onClick={this.selectShip} basic {...btnSet['normal']}>
               { btnSet.normal.color !== undefined && <Icon name='check' /> }
-              <span>พัสดุไปรษณีย์ {priceShiping.normal} บาท</span>
+              <span>พัสดุไปรษณีย์ {initPrinceShip.normal + sumPlusPaking} บาท</span>
             </Button>
           }
           { 
             weight <= 4000 &&
-            <Button type="regis" price={priceShiping.regis}  onClick={this.selectShip} basic  {...btnSet['regis']} >
+            <Button type="regis" price={initPrinceShip.regis + sumPlusPaking}  onClick={this.selectShip} basic  {...btnSet['regis']} >
               {btnSet.regis.color !== undefined && <Icon name='check' /> }
-              <span>ลงทะเบียน {priceShiping.regis} บาท</span>
+              <span>ลงทะเบียน {initPrinceShip.regis + sumPlusPaking} บาท</span>
             </Button>
           }
-          <Button type="ems" price={priceShiping.ems}  onClick={this.selectShip}  basic {...btnSet['ems']}  >
+          <Button type="ems" price={initPrinceShip.ems + sumPlusPaking}  onClick={this.selectShip}  basic {...btnSet['ems']}  >
             { btnSet.ems.color !== undefined && <Icon name='check' /> }
-            <span>EMS {priceShiping.ems} บาท</span>
+            <span>EMS {initPrinceShip.ems + sumPlusPaking} บาท</span>
           
           </Button>
         </Tab.Pane> 

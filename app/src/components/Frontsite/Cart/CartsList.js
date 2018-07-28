@@ -3,7 +3,8 @@ import {
   Grid, 
   Segment ,
   Image,
-  Checkbox
+  Checkbox,
+  Icon
 } from 'semantic-ui-react'
 import CartQty from './CartQty'
 import { getById } from "../../../firebase/products";
@@ -45,11 +46,6 @@ class CartsList extends Component {
     })
   }
 
-  // componentDidUpdate(){
-  //   const { prodInf } = this.state
-  //   this.props.calTotalPrice(prodInf)
-  // }
-
   handleChangeQty = (prodId,qty) =>{
     //console.log('handleChangeQty',prodId,qty)
     this.props.onHandleChangeQty(prodId,qty)
@@ -75,14 +71,11 @@ class CartsList extends Component {
    
   }
 
-  // calTotalPrice = () =>{
+  handleDelete = (e,data) =>{
 
-
-
-   
-  // }
-
-
+    //console.log('handleDelete ',data)
+    this.props.onDeleteProductList(data)
+  }
 
   render(){
 
@@ -98,7 +91,7 @@ class CartsList extends Component {
             <Grid.Column width={1} textAlign="left" >
               <Checkbox prod_id={item.prodId} checked={item.checked} onClick={this.handleChecked} />
             </Grid.Column>
-            <Grid.Column width={9}   >
+            <Grid.Column width={8}   >
               <Image 
                 src={prodInf.thumb_img} 
                 size='tiny' 
@@ -111,8 +104,11 @@ class CartsList extends Component {
             <Grid.Column width={2} textAlign="left">
               {!loading && `฿${prodInf.price}`}
             </Grid.Column>
-            <Grid.Column width={4} textAlign="right">
+            <Grid.Column width={3} textAlign="right">
               <CartQty prodId={item.prodId} qty={item.qty} onChangeQty={this.handleChangeQty} />
+            </Grid.Column>
+            <Grid.Column width={2} textAlign="right">
+              <Icon name="delete" link onClick={(e) => this.handleDelete(e,Object.assign(item,prodInf))} color="orange" />
             </Grid.Column>
           </Grid.Row>
         </Grid>

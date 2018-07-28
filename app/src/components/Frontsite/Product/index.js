@@ -100,22 +100,30 @@ class Product extends Component {
     //console.log('onAddtoCart',this.props.userInf);
     const { userInf,pModel,Carts } = this.props
 
-    const sumQty = Carts.reduce((acc,item)=>{
-      return parseInt(acc,0) + parseInt(item.qty,0)
-    },0)
+    //console.log('onAddtoCart Carts:',Carts,'pModel',pModel)
 
-    const  model = {
+    // const sumQty = Carts.reduce((acc,item)=>{
+    //   return (item.prodId === pModel.prodId) ? parseInt(acc,0) + parseInt(item.qty,0):acc
+    // },0)
+
+    const prevProd = Carts.find( item => item.prodId === pModel.prodId )
+
+    //console.log('prevProd',prevProd)
+
+    const  newModelProd = {
       uid:userInf.id,
       carts:{
-        //userId:this.props.userInf.id,
         prodId:pModel.prodId,
-        qty:parseInt(this.state.qty,0)+sumQty
+        qty:parseInt(this.state.qty,0) +  ( (prevProd === undefined)?0: prevProd.qty),
+        checked:true 
       }
     }
 
+    //console.log('onAddtoCart:',newModelProd)
+    
     this.setState({bt1Load:true})
 
-    this.props.addCart(model).then((secc)=>{
+    this.props.addCart(newModelProd).then((secc)=>{
       
       this.onShowStatus()
       this.setState({bt1Load:false})
@@ -130,16 +138,19 @@ class Product extends Component {
 
     const { userInf,pModel,Carts } = this.props
 
-    const sumQty = Carts.reduce((acc,item)=>{
-      return parseInt(acc,0) + parseInt(item.qty,0)
-    },0)
+    // const sumQty = Carts.reduce((acc,item)=>{
+    //   return parseInt(acc,0) + parseInt(item.qty,0)
+    // },0)
+
+    const prevProd = Carts.find( item => item.prodId === pModel.prodId )
 
     const  model = {
       uid:userInf.id,
       carts:{
         //userId:this.props.userInf.id,
         prodId:pModel.prodId,
-        qty:parseInt(this.state.qty,0)+sumQty
+        qty:parseInt(this.state.qty,0) + ( (prevProd === undefined)?0: prevProd.qty),
+        checked:true
       }
     }
 
