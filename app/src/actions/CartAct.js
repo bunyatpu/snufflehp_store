@@ -73,12 +73,16 @@ export const manageCart = (data,delSet) => {
 
    
     
-    data.cartList = newList;
+    //data.cartList = newList;
+    let newData = Object.assign({},data)
+    newData.cartList = newList;
 
     //console.log('newList',newList)
 
     return new Promise((resolve,reject)=>{
-      saveCart(data).then((secc)=>{
+      saveCart(newData).then((secc)=>{
+
+        //console.log('saveCart:',newList)
         dispatch({
           type: actionType.ADDCART,
           payload: newList
