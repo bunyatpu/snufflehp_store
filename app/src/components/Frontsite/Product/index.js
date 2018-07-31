@@ -2,10 +2,11 @@ import React,{Component} from 'react'
 import { connect } from 'react-redux'
 import { getProductByName } from '../../../actions/product';
 import {setSignInOpen} from '../../../actions/DialogAct';
-import {addCart} from '../../../actions/CartAct';
+import {addCart,updateCartList} from '../../../actions/CartAct';
 import AddrForm from '../../../components/common/form/AddrForm'
 import MuiDialog from '../../../components/common/dialog/MuiDialog'
 import StatusDialog from '../../../components/common/dialog/StatusDialog'
+import ModelError from '../../../components/common/Modal/ModalError'
 
 import { 
   Header, 
@@ -33,7 +34,9 @@ class Product extends Component {
       },
       isOpenStatus:false,
       bt1Load:false,
-      bt2Load:false
+      bt2Load:false,
+      errorOpen:false,
+      msgError:''
     }
   }
 
@@ -98,72 +101,46 @@ class Product extends Component {
 
   onAddtoCart = () => {
     //console.log('onAddtoCart',this.props.userInf);
-    const { userInf,pModel,Carts } = this.props
-
-    //console.log('onAddtoCart Carts:',Carts,'pModel',pModel)
-
-    // const sumQty = Carts.reduce((acc,item)=>{
-    //   return (item.prodId === pModel.prodId) ? parseInt(acc,0) + parseInt(item.qty,0):acc
-    // },0)
-
+    const { userInf,pModel,Carts ,updateCartList} = this.props
     const prevProd = Carts.find( item => item.prodId === pModel.prodId )
-
-    //console.log('prevProd',prevProd)
-
-    const  newModelProd = {
-      uid:userInf.id,
-      carts:{
-        prodId:pModel.prodId,
-        qty:parseInt(this.state.qty,0) +  ( (prevProd === undefined)?0: prevProd.qty),
-        checked:true 
-      }
-    }
-
-    //console.log('onAddtoCart:',newModelProd)
     
-    this.setState({bt1Load:true})
 
-    this.props.addCart(newModelProd).then((secc)=>{
+    const data = {
+      prodId:pModel.prodId,
+      qty:parseInt(this.state.qty,0) +  ( (prevProd === undefined)?0: prevProd.qty),
+      checked:true 
+    }
+    updateCartList(userInf.id,data).then((secc)=>{
       
       this.onShowStatus()
       this.setState({bt1Load:false})
 
     }).catch((error)=>{
       console.log('error->',error);
+      this.setState({errorOpen:true,msgError:error.message})
     })
+
 
   }
 
   gotoCart = () => {
 
-    const { userInf,pModel,Carts } = this.props
-
-    // const sumQty = Carts.reduce((acc,item)=>{
-    //   return parseInt(acc,0) + parseInt(item.qty,0)
-    // },0)
-
+    const { userInf,pModel,Carts,updateCartList } = this.props
     const prevProd = Carts.find( item => item.prodId === pModel.prodId )
 
-    const  model = {
-      uid:userInf.id,
-      carts:{
-        //userId:this.props.userInf.id,
-        prodId:pModel.prodId,
-        qty:parseInt(this.state.qty,0) + ( (prevProd === undefined)?0: prevProd.qty),
-        checked:true
-      }
+    const data = {
+      prodId:pModel.prodId,
+      qty:parseInt(this.state.qty,0) +  ( (prevProd === undefined)?0: prevProd.qty),
+      checked:true 
     }
-
-    this.setState({bt2Load:true})
-
-    this.props.addCart(model).then((secc)=>{
+    updateCartList(userInf.id,data).then((secc)=>{
       
-      //this.onShowStatus()
       this.setState({bt2Load:false})
       this.props.historya.push('/cart')
 
     }).catch((error)=>{
       console.log('error->',error);
+      this.setState({errorOpen:true,msgError:error.message})
     })
 
   }
@@ -187,9 +164,13 @@ class Product extends Component {
     })
   }
 
+  onCloseErrorModal = () =>{
+    this.setState({errorOpen:false})
+  }
+
   render(){
 
-    let { qty,addrForm } = this.state;
+    let { qty,addrForm,errorOpen,msgError } = this.state;
     let { pModel ,userInf} = this.props;
 
     //console.log('cart now=>',Carts);
@@ -199,6 +180,7 @@ class Product extends Component {
 
     return (
       <div>
+        <ModelError isOpen={errorOpen} onClose={this.onCloseErrorModal} message={msgError} />
         <StatusDialog isOpen={this.state.isOpenStatus} />
         <Grid container padded="vertically"  >
           <Grid.Row>
@@ -291,4 +273,9 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps,{getProductByName,setSignInOpen,addCart})(Product);
+export default connect(mapStateToProps,{
+  getProductByName,
+  setSignInOpen,
+  addCart,
+  updateCartList
+})(Product);

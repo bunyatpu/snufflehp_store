@@ -1,27 +1,71 @@
 import actionType from "../constants";
 
+
 const Carts  = (state = {lists:[]}, action) =>{
+
+  let newList   = [...state.lists];
+  let findIndex = null
 
   switch(action.type) {
     case actionType.ADDCART:
 
+      let newCartsList1 = [...newList];
 
-      // let newList = [...state.lists];
+      //console.log('state.list ',state.lists,' payload',action.payload)
 
-      // let findIndex = state.lists.findIndex(item => item.prodId === action.payload.prodId)
+      action.payload.forEach(ele => {
+        const hIndex = newCartsList1.findIndex(item => item.prodId === ele.prodId)
+        //console.log('hIndex',hIndex)
+        if(hIndex < 0){
+          newCartsList1.push(ele)
+        }else{
+          newCartsList1[hIndex] = {...state.lists[hIndex],...ele}
+        }
+
+      })
+
+      //console.log('newCartsList1',newCartsList1);
+
+      return Object.assign({},state,{...state,lists:newCartsList1});
+      //return Object.assign({},state,{...state,lists:action.payload});
+
+    case actionType.LOAD_PROD_TO_CART:
+
+      findIndex = state.lists.findIndex(item => item.prodId === action.payload.prodId)
+
+      if(findIndex < 0){
+        newList.push(action.payload)
+      }else{
+        newList[findIndex] = {...state.lists[findIndex],prodInf:action.payload}
+      }
+
+      return {...state,lists:newList}
+  
+    case actionType.UPDATE_CART_LIST:
+
+      findIndex = state.lists.findIndex(item => item.prodId === action.payload.prodId)
+
+      if(findIndex < 0){
+        newList.push(action.payload)
+      }else{
+        newList[findIndex] = {...state.lists[findIndex],...action.payload}
+      }
+
+      const resUpdate = {...state,lists:newList}
       
-      // if(findIndex < 0){
-      //   newList.push(action.payload)
-      // }else{
-    
-      //   newList[findIndex] = {...state.lists[findIndex],qty:parseInt(state.lists[findIndex].qty,0)+parseInt(action.payload.qty,0)}
-      // }
+      //console.log('resUpdate',resUpdate)
+   
+      return resUpdate
+      //return {...state}
+ 
+    case actionType.DELETE_CART_LIST:
 
+      findIndex = state.lists.findIndex(item => item.prodId === action.payload.prodId)
+      if(findIndex >= 0){
+        newList.splice(findIndex,1)
+      }
 
-
-      return Object.assign({},state,{...state,lists:action.payload});
-
-
+      return {...state,lists:newList}
     default:
       return state
   }

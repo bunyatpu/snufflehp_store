@@ -1,5 +1,6 @@
 import actionType from '../constants'
 import { saveCart } from "../firebase/CartsDB";
+import { getById } from '../firebase/products'
 
 export const addCart = (data) => {
   return (dispatch,ownProps) => {
@@ -96,5 +97,87 @@ export const manageCart = (data,delSet) => {
 
     
 
+  }
+}
+
+export const loadProdInf = (prodId) => {
+  return (dispatch) => {
+
+    getById(prodId).then((snap)=>{
+
+      let prodVal = (snap.val() === null) ? {}:snap.val();
+
+     
+      prodVal.prodId = prodId
+
+      dispatch({ 
+        type:actionType.LOAD_PROD_TO_CART,
+        payload:prodVal
+      })
+
+    }).catch((error)=>{
+      console.log('error=>',error)
+    })
+
+  }
+}
+
+export const updateCartList = (userId,data) => {
+  return (dispatch,ownProps) => {
+
+    dispatch({ 
+      type:actionType.UPDATE_CART_LIST,
+      payload:data
+    })
+
+    //copy deep shadow and that update to firebase
+    let cartNow = JSON.parse(JSON.stringify(ownProps().Carts));
+
+    const newData = {
+      uid:userId,
+      cartList:cartNow.lists.map(i=>{
+        return {checked:i.checked,prodId:i.prodId,qty:i.qty}
+      })
+    }
+    //
+
+    return new Promise((resolve,reject)=>{
+      saveCart(newData).then((secc)=>{
+        resolve(secc)
+      }).catch((error)=>{
+        reject(error)
+      })
+    })
+  }
+}
+
+export const deleteCartList = (userId,data) => {
+  return (dispatch,ownProps) => {
+
+    dispatch({ 
+      type:actionType.DELETE_CART_LIST,
+      payload:data
+    })
+
+    //copy deep shadow and that update to firebase
+    let cartNow = JSON.parse(JSON.stringify(ownProps().Carts));
+
+    const newData = {
+      uid:userId,
+      cartList:cartNow.lists.map(i=>{
+        return {checked:i.checked,prodId:i.prodId,qty:i.qty}
+      })
+    }
+    //
+
+    return new Promise((resolve,reject)=>{
+      saveCart(newData).then((secc)=>{
+        resolve(secc)
+      }).catch((error)=>{
+        reject(error)
+      })
+    })
+
+    
   }
 }

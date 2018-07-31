@@ -7,8 +7,10 @@ import {
   Icon
 } from 'semantic-ui-react'
 import CartQty from './CartQty'
-import { getById } from "../../../firebase/products";
+//import { getById } from "../../../firebase/products";
+import { loadProdInf,updateCartList } from "../../../actions/CartAct";
 import imgWireframe from "./wiref1.png"
+import { connect } from 'react-redux'
 
 class CartsList extends Component {
 
@@ -23,55 +25,35 @@ class CartsList extends Component {
   componentDidMount(){
 
     const { item } = this.props
+    //console.log('componentDidMount',item)
+    this.props.loadProdInf(item.prodId)
 
-    //console.log('item',item)
-    getById(item.prodId).then((products)=>{
-      //console.log('--->',products.val())
-      let prodVal = {}
-      
-      if(products.val() !== null){
-        prodVal = products.val()
-        prodVal.prodId = item.prodId
-        prodVal.qty = item.qty 
-        prodVal.checked = item.checked
-      }
-
-      
-
-      this.setState({loading:false,prodInf:prodVal})
-
-      this.props.calTotalPrice(prodVal)
-
-    }).catch((error)=>{
-      console.log(error)
-    })
   }
 
   handleChangeQty = (prodId,qty) =>{
-    //console.log('handleChangeQty',prodId,qty)
-   
-    // const { item } = this.props
-    // let newState = Object.assign({},this.state.prodInf,item)
-    // newState.qty = qty
-    // this.props.onHandleChangeQty(newState)
-    this.calHandelChangeModel(this.props.onHandleChangeQty,{qty:qty})
 
-    //console.log('handleChangeQty newState=>',newState)
-    //this.props.calTotalPrice(newState)
-   
+    //this.calHandelChangeModel(this.props.onHandleChangeQty,{qty:qty})
+    const { userInf,updateCartList } = this.props
+    //console.log('userInf',userInf)
+    const data = {
+      prodId,
+      qty
+    }
+
+    updateCartList(userInf.id,data)
+
   }
 
   handleChecked =(e,data)=>{
-    //console.log('handleChecked e=>',e,data)
-    //console.log('handleChecked',data)
-    // const { item } = this.props
-    // let newState = Object.assign({},this.state.prodInf,item)
-    // newState.checked = data.checked;
-    // this.props.onHandleToggleChecked(newState)
 
-    this.calHandelChangeModel(this.props.onHandleToggleChecked,{checked:data.checked})
-    //this.props.calTotalPrice(newState)
+    //this.calHandelChangeModel(this.props.onHandleToggleChecked,{checked:data.checked})
+    const { userInf,updateCartList } = this.props
+    const model = {
+      prodId:data.prod_id,
+      checked:data.checked
+    }
    
+    updateCartList(userInf.id,model)
   }
 
   calHandelChangeModel = (calType,params) =>  {
@@ -85,16 +67,23 @@ class CartsList extends Component {
   }
 
   handleDelete = (e,data) =>{
-
-    //console.log('handleDelete ',data)
-    this.props.onDeleteProductList(data)
+    //const { userInf,deleteCartList } =  this.props
+    this.props.handleOpenProdDelete(data)
+    // const model = {
+    //   prodId:data.prodId
+    // }
+    // deleteCartList(userInf.id,model)
   }
 
   render(){
 
-    const { item,mainLoading } = this.props
-    const { loading, prodInf } = this.state
+    const { item } = this.props
+    //const { loading } = this.state
+    //console.log('render',item)
 
+    const prodInf = item.prodInf
+    const loading = (prodInf === undefined) ? true:false
+  
     //console.log('render item',item)
     //console.log(prodInf)
     const secSty = {padding:'10px',margin:'5px',border:'1px solid rgba(139, 139, 140, 0.15)'}
@@ -114,7 +103,7 @@ class CartsList extends Component {
                       true &&
                       <Image 
                         src={imgWireframe} 
-                        srcSet={prodInf.thumb_img}
+                        srcSet={ (loading) ? '':prodInf.thumb_img }
                         size='tiny' 
                         verticalAlign="top" 
                         floated="left"
@@ -138,7 +127,6 @@ class CartsList extends Component {
                 prodId={item.prodId} 
                 qty={item.qty} 
                 onChangeQty={this.handleChangeQty}
-                mainLoading={mainLoading} 
               />
             </Grid.Column>
             <Grid.Column width={2} textAlign="right">
@@ -150,8 +138,17 @@ class CartsList extends Component {
     )
   }
 }
+//loadProdInf
 
-export default CartsList;
+const mapStateToProps = (state) => {
+  return {
+    userInf: state.User
+  }
+}
+export default connect(mapStateToProps,{
+  loadProdInf,
+  updateCartList
+})(CartsList);
 
 
 

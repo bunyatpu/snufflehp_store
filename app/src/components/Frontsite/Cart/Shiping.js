@@ -19,21 +19,15 @@ class Shiping extends Component{
         normal:20,
         ems:60,
         regis:40
+      },
+      initPriceShiping:{
+        normal:20,
+        regis:40,
+        ems:60
       }
     }
   }
 
-  componentDidMount(){
-
-    // const { weight,sumPlusPaking } = this.props
-    // const { initPrinceShip } = this.state
-
-    // console.log('componentDidMount  props:',this.props,'state',this.state)
-
-    // let seDefaulType = (weight > 4000) ? 'normal':'regis'
-
-    //this.handleSelShipping({price:initPrinceShip[seDefaulType] + sumPlusPaking})
-  }
 
   componentWillReceiveProps(nextProps){
 
@@ -47,35 +41,26 @@ class Shiping extends Component{
   }
 
   selectShip = (e,data) =>{
-    //console.log('selectShip',e,data)
-
-    this.setState({active:data.type})
-    this.handleSelShipping(data)
+ 
+    this.props.handleSelShipping({selShiping:data.type})
   }
 
   handleTabChange = (e,data) =>{
-    //console.log(e,data)
-
-    //console.log(data.panes)
-    this.setState({active:data.panes[data.activeIndex]['defaultVale']})
-
-    this.handleSelShipping({price:data.panes[data.activeIndex]['defaultPrice']})
-
     
+    console.log('handleTabChange',data)
   }
 
-  handleSelShipping = (data) =>{
 
-    this.props.handleSelShipping({selShiping:data.type})
-  }
 
   render(){
 
     const color = {style:{}};
     const color2 = {color:'green'}
 
-    //const { active,initPrinceShip } = this.state
-    const { weight ,priceShiping,selShiping} = this.props
+    const { initPriceShiping } = this.state
+    const { weight,selShiping,sumPlusPaking} = this.props
+
+  
 
     //const selBtn = (active === 'ems') ? 'ems': 
 
@@ -97,21 +82,21 @@ class Shiping extends Component{
         render: () => <Tab.Pane>
           {
             weight > 4000 &&
-            <Button type="normal" price={priceShiping.normal} onClick={this.selectShip} basic {...btnSet['normal']}>
+            <Button type="normal" price={initPriceShiping.normal + sumPlusPaking} onClick={this.selectShip} basic {...btnSet['normal']}>
               { btnSet.normal.color !== undefined && <Icon name='check' /> }
-              <span>พัสดุไปรษณีย์ {priceShiping.normal} บาท</span>
+              <span>พัสดุไปรษณีย์ {initPriceShiping.normal+sumPlusPaking} บาท</span>
             </Button>
           }
           { 
             weight <= 4000 &&
-            <Button type="regis" price={priceShiping.regis}  onClick={this.selectShip} basic  {...btnSet['regis']} >
+            <Button type="regis" price={initPriceShiping.regis+sumPlusPaking}  onClick={this.selectShip} basic  {...btnSet['regis']} >
               {btnSet.regis.color !== undefined && <Icon name='check' /> }
-              <span>ลงทะเบียน {priceShiping.regis} บาท</span>
+              <span>ลงทะเบียน {initPriceShiping.regis+sumPlusPaking} บาท</span>
             </Button>
           }
-          <Button type="ems" price={priceShiping.ems}  onClick={this.selectShip}  basic {...btnSet['ems']}  >
+          <Button type="ems" price={initPriceShiping.ems+sumPlusPaking}  onClick={this.selectShip}  basic {...btnSet['ems']}  >
             { btnSet.ems.color !== undefined && <Icon name='check' /> }
-            <span>EMS {priceShiping.ems} บาท</span>
+            <span>EMS {initPriceShiping.ems+sumPlusPaking} บาท</span>
           
           </Button>
         </Tab.Pane> 

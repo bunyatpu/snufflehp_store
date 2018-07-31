@@ -67,7 +67,7 @@ const loadUser = (authId) =>{
   })
 }
 
-const fbLoadUserListener =  (authId,dispatch) => {
+const fbLoadUserListener =  (authId,dispatch,ownState) => {
   //console.log('fbLoadUserListener',authId,firebase)
 
 
@@ -153,13 +153,13 @@ const fbLoadUserListener =  (authId,dispatch) => {
         payload: userInf
       })
 
-      //console.log('userInf-->',userInf)
+      //console.log('ownState().Carts.lists.length=>',ownState().Carts.lists.length)
 
       //dispath carts
-      if(userInf.carts !== undefined){
+      if(userInf.carts !== undefined && ownState().Carts.lists.length <= 0){
         let cartNow = Object.values(userInf.carts)
 
-        //console.log('cartNow',cartNow);
+        //console.log('userInf cartNow',cartNow);
         dispatch({
           type: actionType.ADDCART,
           payload: cartNow

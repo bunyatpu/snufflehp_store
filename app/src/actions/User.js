@@ -15,9 +15,9 @@ import cookie from 'react-cookies'
 
 export const loadUserListener = (authId) => {
 
-  return (dispatch) => {
+  return (dispatch,ownState) => {
     //console.log('loadUserListener')
-    database.fbLoadUserListener(authId,dispatch)
+    database.fbLoadUserListener(authId,dispatch,ownState)
   }
 }
 
